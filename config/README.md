@@ -1,3 +1,5 @@
+## NGINX configuration
+
 This little readme instructs you how to set up your home assistant to proxy to the application.
 
 1. Install and configure SSL (I've used Duckdns which is easy) with the *NGINX Home Assistant SSL proxy* addon
@@ -24,3 +26,45 @@ This little readme instructs you how to set up your home assistant to proxy to t
 >        valid_lft forever preferred_lft forever
 > ```
 > to figure out the host IP address.
+
+## Homeassistant configuration
+
+Then we need to configure Homeassistant to push the current location to the web service at a fixed time interval.
+
+### status updater
+
+Add a *REST command* service that pushes your current position to your app (using local network):
+
+```yaml
+rest_command:
+    vartarvipavag_update:
+        url: 'http://172.17.0.1:3001/position'
+        method: "POST"
+        content_type: "application/json"
+        payload: >
+            {
+                "latitude": "{{ state_attr('device_tracker.<device>', 'latitude') }}",
+                "longitude": "{{ state_attr('device_tracker.<device>', 'longitude') }}",
+                "timestamp": "{{ now().isoformat() }}"
+            }
+```
+
+> [!INFO]
+> Change `<device>` for the name of your device. Also, the IP above should be the same as you set in the NGINX configuration.
+
+### automation
+
+then add the following automation
+
+```yaml
+alias: Interrail Position Tracker
+description: ""
+trigger:
+  - platform: time_pattern
+    hours: "*"  # every hour at XX:00:00
+condition: []
+action:
+  - service: rest_command.vartarvipavag_update
+    data: {}
+mode: single
+```
