@@ -89,8 +89,8 @@ const InterrailMap: React.FC<InterrailMapProps> = ({ positions, onPositionClick 
       <div className="map-container">
         <div className="loading">
           <div style={{ textAlign: 'center' }}>
-            <h3>📍 Your Journey Awaits</h3>
-            <p>No positions tracked yet. Soon the interrail adventure will begin!</p>
+            <h3>📍 Snart drar vi iväg!</h3>
+            <p>Inga positioner spårade ännu.</p>
           </div>
         </div>
       </div>
@@ -148,7 +148,7 @@ const InterrailMap: React.FC<InterrailMapProps> = ({ positions, onPositionClick 
               <Popup>
                 <div style={{ minWidth: '200px' }}>
                   <h4 style={{ margin: '0 0 8px 0', color: '#2563eb' }}>
-                    {isFirst ? '🚀 Journey Start' : isLast ? '🏁 Current Position' : `📍 Stop ${index + 1}`}
+                    {isFirst ? '🚀 Resans början' : isLast ? '🏁 Nuvarande position' : `📍 Stopp ${index + 1}`}
                   </h4>
                   
                   <div style={{ marginBottom: '8px' }}>
@@ -157,29 +157,29 @@ const InterrailMap: React.FC<InterrailMapProps> = ({ positions, onPositionClick 
                   
                   {position.city && (
                     <div style={{ marginBottom: '4px' }}>
-                      <strong>🏙️ City:</strong> {position.city}
+                      <strong>🏙️ Stad:</strong> {position.city}
                     </div>
                   )}
                   
                   {position.country && (
                     <div style={{ marginBottom: '4px' }}>
-                      <strong>🇪🇺 Country:</strong> {position.country}
+                      <strong>🇪🇺 Land:</strong> {position.country}
                     </div>
                   )}
                   
                   <div style={{ marginBottom: '4px', fontSize: '0.9em', color: '#666' }}>
-                    <strong>🌍 Coordinates:</strong> {position.latitude.toFixed(4)}, {position.longitude.toFixed(4)}
+                    <strong>🌍 Koordinater:</strong> {position.latitude.toFixed(4)}, {position.longitude.toFixed(4)}
                   </div>
                   
                   {distanceFromPrevious > 0 && (
                     <div style={{ marginBottom: '4px', fontSize: '0.9em', color: '#666' }}>
-                      <strong>🛤️ Distance:</strong> {distanceFromPrevious.toFixed(1)} km
+                      <strong>🛤️ Avstånd:</strong> {distanceFromPrevious.toFixed(1)} km
                     </div>
                   )}
                   
                   {position.notes && position.notes.length > 0 && (
                     <div style={{ marginTop: '8px' }}>
-                      <strong>📝 Notes:</strong>
+                      <strong>📝 Anteckningar:</strong>
                       {position.notes.map((note, noteIndex) => (
                         <div key={note.id} style={{ 
                           marginTop: '4px', 

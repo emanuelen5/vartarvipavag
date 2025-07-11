@@ -96,8 +96,8 @@ const TravelStats: React.FC<TravelStatsProps> = ({ positions }) => {
     return (
       <div className="stats-container">
         <div className="stat-card">
-          <h3>✨ Journey Statistics</h3>
-          <p>No positions tracked yet. Soon the interrail adventure will begin!</p>
+          <h3>✨ Resestatistik</h3>
+          <p>Inga positioner spårade ännu.</p>
         </div>
       </div>
     );
@@ -106,35 +106,35 @@ const TravelStats: React.FC<TravelStatsProps> = ({ positions }) => {
   return (
     <div className="stats-container">
       <div className="stat-card">
-        <h3>🛤️ Total Distance</h3>
+        <h3>🛤️ Total sträcka</h3>
         <p className="value">{totalDistance.toFixed(1)}</p>
-        <p className="label">kilometers</p>
+        <p className="label">kilometer</p>
       </div>
       
       <div className="stat-card">
-        <h3>🇪🇺 Countries Visited</h3>
+        <h3>🇪🇺 Besökta länder</h3>
         <p className="value">{uniqueCountries.length}</p>
         <p className="label">
-          {uniqueCountries.length > 0 ? uniqueCountries.join(', ') : 'None yet'}
+          {uniqueCountries.length > 0 ? uniqueCountries.join(', ') : 'Inga ännu'}
         </p>
       </div>
       
       <div className="stat-card">
-        <h3>🏙️ Cities Visited</h3>
+        <h3>🏙️ Besökta städer</h3>
         <p className="value">{uniqueCities.length}</p>
         <p className="label">
           {uniqueCities.length > 0 ? 
             uniqueCities.slice(0, 3).join(', ') + (uniqueCities.length > 3 ? '...' : '') : 
-            'None yet'
+            'Inga ännu'
           }
         </p>
       </div>
       
       <div className="stat-card">
-        <h3>📅 Journey Duration</h3>
+        <h3>📅 Reselängd</h3>
         <p className="value">{journeyDuration}</p>
         <p className="label">
-          {journeyDuration === 1 ? 'day' : 'days'}
+          {journeyDuration === 1 ? 'dag' : 'dagar'}
           {journeyDuration > 0 && (
             <span style={{ display: 'block', fontSize: '0.8em', marginTop: '0.25rem' }}>
               {new Date(positions[0].timestamp).toLocaleDateString()} - {new Date(positions[positions.length - 1].timestamp).toLocaleDateString()}

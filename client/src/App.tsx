@@ -148,7 +148,7 @@ const App: React.FC = () => {
       <main className="container">
         {error && (
           <div className="error">
-            <strong>Error:</strong> {error}
+            <strong>Fel:</strong> {error}
             <button 
               onClick={handleRefresh}
               style={{
@@ -162,7 +162,7 @@ const App: React.FC = () => {
                 fontSize: '12px'
               }}
             >
-              Retry
+              Försök igen
             </button>
           </div>
         )}
@@ -170,8 +170,8 @@ const App: React.FC = () => {
         {loading && positions.length === 0 ? (
           <div className="loading">
             <div>
-              <h3>🔄 Loading your journey...</h3>
-              <p>Fetching position data from the server</p>
+              <h3>🔄 Laddar din resa...</h3>
+              <p>Hämtar positionsdata från servern</p>
             </div>
           </div>
         ) : (
@@ -199,14 +199,14 @@ const App: React.FC = () => {
             }}
           >
             <h4 style={{ margin: '0 0 8px 0' }}>
-              📍 Selected Position
+              📍 Vald position
             </h4>
-            <p><strong>City:</strong> {selectedPosition.city || 'Unknown'}</p>
-            <p><strong>Country:</strong> {selectedPosition.country || 'Unknown'}</p>
-            <p><strong>Time:</strong> {new Date(selectedPosition.timestamp).toLocaleString()}</p>
+            <p><strong>Stad:</strong> {selectedPosition.city || 'Okänd'}</p>
+            <p><strong>Land:</strong> {selectedPosition.country || 'Okänd'}</p>
+            <p><strong>Tid:</strong> {new Date(selectedPosition.timestamp).toLocaleString()}</p>
             {selectedPosition.notes && selectedPosition.notes.length > 0 && (
               <div>
-                <p><strong>Notes:</strong></p>
+                <p><strong>Anteckningar:</strong></p>
                 {selectedPosition.notes.map((note) => (
                   <p key={note.id} style={{ fontSize: '0.9em', marginLeft: '10px' }}>
                     • {note.text}
@@ -226,7 +226,7 @@ const App: React.FC = () => {
                 fontSize: '12px'
               }}
             >
-              Close
+              Stäng
             </button>
           </div>
         )}
@@ -239,12 +239,12 @@ const App: React.FC = () => {
         borderTop: '1px solid #eee',
         marginTop: '40px'
       }}>
-        <p>An app by Sara & Erasmus</p>
-        <p>Powered by Home Assistant & TypeScript | Maps by OpenStreetMap</p>
+        <p>En app av Sara & Erasmus</p>
+        <p>Drivs av Home Assistant & TypeScript | Kartor av OpenStreetMap</p>
         <p style={{ fontSize: '0.8em', marginTop: '8px' }}>
-          Last updated: {positions.length > 0 ? 
+          Senast uppdaterad: {positions.length > 0 ? 
             new Date(positions[positions.length - 1].timestamp).toLocaleString() : 
-            'No data yet'
+            'Ingen data ännu'
           }
         </p>
       </footer>
