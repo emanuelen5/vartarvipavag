@@ -4,6 +4,7 @@
   "description": "Interrail trip tracking application",
   "scripts": {
     "dev": "concurrently \"npm run server:dev\" \"npm run client:dev\"",
+    "build": "npm run server:build && npm run client:build",
     "server:dev": "cd server && npm run dev",
     "client:dev": "cd client && npm run dev",
     "server:build": "cd server && npm run build",
