@@ -77,13 +77,7 @@ const TravelStats: React.FC<TravelStatsProps> = ({ positions }) => {
     return diffDays;
   };
 
-  // Format large numbers
-  const formatNumber = (num: number): string => {
-    if (num >= 1000) {
-      return (num / 1000).toFixed(1) + 'k';
-    }
-    return num.toString();
-  };
+
 
   const totalDistance = calculateTotalDistance();
   const uniqueCountries = getUniqueCountries();

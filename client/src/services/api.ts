@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Position, ApiResponse, CreatePositionRequest, UpdatePositionRequest } from '../types';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+const API_BASE_URL = (import.meta as any).env.VITE_API_URL || 'http://localhost:3001';
 
 const api = axios.create({
   baseURL: API_BASE_URL,

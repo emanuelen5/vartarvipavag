@@ -180,7 +180,7 @@ const InterrailMap: React.FC<InterrailMapProps> = ({ positions, onPositionClick 
                   {position.notes && position.notes.length > 0 && (
                     <div style={{ marginTop: '8px' }}>
                       <strong>📝 Anteckningar:</strong>
-                      {position.notes.map((note, noteIndex) => (
+                      {position.notes.map((note) => (
                         <div key={note.id} style={{ 
                           marginTop: '4px', 
                           padding: '4px', 
