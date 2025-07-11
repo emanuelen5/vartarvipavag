@@ -48,6 +48,24 @@ const TravelStats: React.FC<TravelStatsProps> = ({ positions }) => {
     return Array.from(new Set(cities));
   };
 
+  // Calculate total notes
+  const getTotalNotes = (): number => {
+    return positions.reduce((total, pos) => total + (pos.notes?.length || 0), 0);
+  };
+
+  // Get notes by source
+  const getNotesBySource = (): { telegram: number; homeAssistant: number; manual: number } => {
+    const counts = { telegram: 0, homeAssistant: 0, manual: 0 };
+    positions.forEach(pos => {
+      pos.notes?.forEach(note => {
+        if (note.source === 'telegram') counts.telegram++;
+        else if (note.source === 'home_assistant') counts.homeAssistant++;
+        else counts.manual++;
+      });
+    });
+    return counts;
+  };
+
   // Calculate journey duration
   const getJourneyDuration = (): number => {
     if (positions.length < 2) return 0;
@@ -71,13 +89,15 @@ const TravelStats: React.FC<TravelStatsProps> = ({ positions }) => {
   const uniqueCountries = getUniqueCountries();
   const uniqueCities = getUniqueCities();
   const journeyDuration = getJourneyDuration();
+  const totalNotes = getTotalNotes();
+  const notesBySource = getNotesBySource();
 
   if (positions.length === 0) {
     return (
       <div className="stats-container">
         <div className="stat-card">
-          <h3>📊 Journey Statistics</h3>
-          <p>Start tracking your positions to see your journey statistics!</p>
+          <h3>✨ Journey Statistics</h3>
+          <p>No positions tracked yet. Soon the interrail adventure will begin!</p>
         </div>
       </div>
     );
@@ -135,6 +155,19 @@ const TravelStats: React.FC<TravelStatsProps> = ({ positions }) => {
           {journeyDuration > 0 ? (totalDistance / journeyDuration).toFixed(1) : '0.0'}
         </p>
         <p className="label">km/day</p>
+      </div>
+      
+      <div className="stat-card">
+        <h3>💬 Travel Notes</h3>
+        <p className="value">{totalNotes}</p>
+        <p className="label">
+          {notesBySource.telegram > 0 && `📱 ${notesBySource.telegram} from Telegram`}
+          {notesBySource.telegram > 0 && (notesBySource.homeAssistant > 0 || notesBySource.manual > 0) && <br />}
+          {notesBySource.homeAssistant > 0 && `🏠 ${notesBySource.homeAssistant} from Home Assistant`}
+          {notesBySource.homeAssistant > 0 && notesBySource.manual > 0 && <br />}
+          {notesBySource.manual > 0 && `✏️ ${notesBySource.manual} manual`}
+          {totalNotes === 0 && 'Start adding notes!'}
+        </p>
       </div>
     </div>
   );

@@ -23,20 +23,14 @@ const InterrailMap: React.FC<InterrailMapProps> = ({ positions, onPositionClick 
   const europeCenter: [number, number] = [50.0, 10.0];
   const europeZoom = 4;
 
-  // Create custom icons for different marker types
-  const createMarkerIcon = (type: 'start' | 'end' | 'regular') => {
-    const colors = {
-      start: '#10b981', // green
-      end: '#dc2626',   // red
-      regular: '#2563eb' // blue
-    };
-
-    const size = type === 'regular' ? 25 : 30;
+  // Create custom marker icon with primary color
+  const createMarkerIcon = (size: number = 25) => {
+    const primaryColor = '#ae3c40'; // primary color
 
     return L.divIcon({
       html: `
         <div style="
-          background-color: ${colors[type]};
+          background-color: ${primaryColor};
           width: ${size}px;
           height: ${size}px;
           border-radius: 50%;
@@ -51,9 +45,7 @@ const InterrailMap: React.FC<InterrailMapProps> = ({ positions, onPositionClick 
     });
   };
 
-  const startIcon = createMarkerIcon('start');
-  const endIcon = createMarkerIcon('end');
-  const regularIcon = createMarkerIcon('regular');
+  const markerIcon = createMarkerIcon();
 
   // Create polyline coordinates for the journey path
   const polylineCoordinates: [number, number][] = positions.map(pos => [pos.latitude, pos.longitude]);
@@ -97,8 +89,8 @@ const InterrailMap: React.FC<InterrailMapProps> = ({ positions, onPositionClick 
       <div className="map-container">
         <div className="loading">
           <div style={{ textAlign: 'center' }}>
-            <h3>🗺️ Your Journey Awaits</h3>
-            <p>No positions tracked yet. Start your interrail adventure!</p>
+            <h3>📍 Your Journey Awaits</h3>
+            <p>No positions tracked yet. Soon the interrail adventure will begin!</p>
           </div>
         </div>
       </div>
@@ -122,10 +114,10 @@ const InterrailMap: React.FC<InterrailMapProps> = ({ positions, onPositionClick 
         {positions.length > 1 && (
           <Polyline
             positions={polylineCoordinates}
-            color="#2563eb"
+            color="#1f2937"
             weight={3}
             opacity={0.7}
-            dashArray="5, 10"
+            dashArray="4, 8"
           />
         )}
         
@@ -133,10 +125,6 @@ const InterrailMap: React.FC<InterrailMapProps> = ({ positions, onPositionClick 
         {positions.map((position, index) => {
           const isFirst = index === 0;
           const isLast = index === positions.length - 1;
-          
-          let icon = regularIcon;
-          if (isFirst) icon = startIcon;
-          else if (isLast) icon = endIcon;
           
           // Calculate distance from previous position
           let distanceFromPrevious = 0;
@@ -152,7 +140,7 @@ const InterrailMap: React.FC<InterrailMapProps> = ({ positions, onPositionClick 
             <Marker
               key={position.id}
               position={[position.latitude, position.longitude]}
-              icon={icon}
+              icon={markerIcon}
               eventHandlers={{
                 click: () => onPositionClick?.(position),
               }}
@@ -189,9 +177,28 @@ const InterrailMap: React.FC<InterrailMapProps> = ({ positions, onPositionClick 
                     </div>
                   )}
                   
-                  {position.notes && (
-                    <div style={{ marginTop: '8px', padding: '4px', background: '#f0f0f0', borderRadius: '4px' }}>
-                      <strong>📝 Notes:</strong> {position.notes}
+                  {position.notes && position.notes.length > 0 && (
+                    <div style={{ marginTop: '8px' }}>
+                      <strong>📝 Notes:</strong>
+                      {position.notes.map((note, noteIndex) => (
+                        <div key={note.id} style={{ 
+                          marginTop: '4px', 
+                          padding: '4px', 
+                          background: note.source === 'telegram' ? '#e3f2fd' : '#f0f0f0', 
+                          borderRadius: '4px',
+                          fontSize: '0.9em'
+                        }}>
+                          <div style={{ fontWeight: 'normal' }}>
+                            {note.source === 'telegram' && '📱 '}
+                            {note.source === 'home_assistant' && '🏠 '}
+                            {note.text}
+                          </div>
+                          <div style={{ fontSize: '0.8em', color: '#666', marginTop: '2px' }}>
+                            {new Date(note.timestamp).toLocaleString()}
+                            {note.telegram_user && ` • ${note.telegram_user}`}
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   )}
                 </div>

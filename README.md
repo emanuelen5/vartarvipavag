@@ -5,10 +5,13 @@ A fullstack web application for tracking and visualizing your European interrail
 ## 🌟 Features
 
 - **Real-time Map Visualization**: Interactive map of Europe showing your journey
-- **Journey Statistics**: Track distance, countries visited, duration, and more
+- **Journey Statistics**: Track distance, countries visited, duration, and more  
 - **Secure API**: Write operations restricted to localhost (for Home Assistant integration)
 - **Modern UI**: Beautiful, responsive design with real-time updates
 - **Travel History**: Complete timeline of your adventure
+- **🤖 Telegram Bot Integration**: Update your journey directly from Telegram
+- **📝 Smart Notes System**: Add contextual notes from multiple sources
+- **📱 Mobile-Friendly**: Easy updates while traveling
 
 ## 🛠️ Tech Stack
 
@@ -76,6 +79,11 @@ This ensures that only your local Home Assistant instance can add position data,
 - `POST /api/positions` - Add new position
 - `PUT /api/positions/:id` - Update position
 - `DELETE /api/positions/:id` - Delete position
+- `POST /api/positions/:id/notes` - Add note to position
+
+### Additional Endpoints
+- `GET /api/positions/latest` - Get latest position
+- `GET /api/telegram/status` - Check Telegram bot status
 
 ### Example Position Data
 ```json
@@ -87,6 +95,30 @@ This ensures that only your local Home Assistant instance can add position data,
   "notes": "Beautiful sunset at the harbor!"
 }
 ```
+
+## 🤖 Telegram Bot Integration
+
+**NEW!** Send updates directly from Telegram while traveling! The bot uses **polling** instead of webhooks, which means it works completely locally without needing a public endpoint.
+
+### Quick Setup
+1. **Create bot**: Message `@BotFather` on Telegram
+2. **Get token**: Save the bot token from BotFather  
+3. **Configure**: Add `TELEGRAM_BOT_TOKEN=your_token` to `server/.env`
+4. **Start server**: The bot will automatically start polling for messages
+5. **Start using**: Share locations and send notes via Telegram!
+
+### What You Can Do
+- **📍 Share Location**: Auto-add positions to your map
+- **💬 Send Messages**: Add notes to your latest position  
+- **📊 Get Stats**: View journey statistics
+- **🗺️ Quick Links**: Direct access to your map
+
+### How It Works
+- **🔄 Polling**: Server checks for new messages every second (configurable)
+- **🔐 Secure**: No public endpoints needed - everything runs locally
+- **📱 Real-time**: Messages are processed as soon as they're received
+
+**👉 See [TELEGRAM_SETUP.md](./TELEGRAM_SETUP.md) for detailed setup guide**
 
 ## 🏠 Home Assistant Integration
 
@@ -129,6 +161,10 @@ ALLOWED_IPS=127.0.0.1,localhost,::1
 
 # Database Configuration
 DATABASE_PATH=./data/interrail.db
+
+# Telegram Bot Configuration (Optional)
+TELEGRAM_BOT_TOKEN=123456789:ABCdefGHIjklMNOpqrsTUVwxyz
+TELEGRAM_POLLING_INTERVAL=1000  # milliseconds, how often to check for new messages
 ```
 
 ## 🗂️ Project Structure

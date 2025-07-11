@@ -16,6 +16,79 @@ const App: React.FC = () => {
       setLoading(true);
       setError(null);
       
+      /* // Temporarily use fake data for preview
+      const fakeData: Position[] = [
+        {
+          id: '1',
+          timestamp: '2024-12-15T10:00:00Z',
+          latitude: 59.3293,
+          longitude: 18.0686,
+          city: 'Stockholm',
+          country: 'Sweden',
+          source: 'home_assistant',
+          notes: [
+            {
+              id: '1',
+              text: 'Starting our amazing interrail journey! 🚂✨',
+              timestamp: '2024-12-15T10:30:00Z',
+              source: 'manual'
+            }
+          ]
+        },
+        {
+          id: '2',
+          timestamp: '2024-12-16T14:20:00Z',
+          latitude: 55.6761,
+          longitude: 12.5683,
+          city: 'Copenhagen',
+          country: 'Denmark',
+          source: 'telegram',
+          notes: [
+            {
+              id: '2',
+              text: 'The train ride was spectacular! Amazing views of the countryside 🌾',
+              timestamp: '2024-12-16T14:30:00Z',
+              source: 'telegram',
+              telegram_user: 'Sara'
+            },
+            {
+              id: '3',
+              text: 'Trying Danish pastries at the station - absolutely delicious! 🥐',
+              timestamp: '2024-12-16T15:45:00Z',
+              source: 'telegram',
+              telegram_user: 'Erasmus'
+            }
+          ]
+        },
+        {
+          id: '3',
+          timestamp: '2024-12-17T09:15:00Z',
+          latitude: 52.5200,
+          longitude: 13.4050,
+          city: 'Berlin',
+          country: 'Germany',
+          source: 'telegram',
+          notes: [
+            {
+              id: '4',
+              text: 'Berlin is incredible! The history here is amazing 🏛️',
+              timestamp: '2024-12-17T09:30:00Z',
+              source: 'telegram',
+              telegram_user: 'Sara'
+            },
+            {
+              id: '5',
+              text: 'Brandenburg Gate at sunset was breathtaking',
+              timestamp: '2024-12-17T18:22:00Z',
+              source: 'manual'
+            }
+          ]
+        }
+      ];
+      
+      setPositions(fakeData); */
+      
+      // Uncomment this to use real API data instead
       const data = await PositionService.getAllPositions();
       setPositions(data);
     } catch (err) {
@@ -51,13 +124,13 @@ const App: React.FC = () => {
     <div className="app">
       <header className="header">
         <div className="container">
-          <h1>🚂 Interrail Journey Tracker</h1>
-          <p>Follow our European adventure in real-time</p>
-          <button 
+          <h1>Sara & Erasmus</h1>
+          <h2>Interrail 2025 🚂</h2>
+          {/* <button 
             onClick={handleRefresh} 
             disabled={loading}
             style={{
-              background: loading ? '#ccc' : '#2563eb',
+              background: loading ? '#ccc' : '#ae3c40',
               color: 'white',
               border: 'none',
               padding: '8px 16px',
@@ -68,7 +141,7 @@ const App: React.FC = () => {
             }}
           >
             {loading ? '🔄 Refreshing...' : '🔄 Refresh'}
-          </button>
+          </button> */}
         </div>
       </header>
 
@@ -103,11 +176,11 @@ const App: React.FC = () => {
           </div>
         ) : (
           <>
-            <TravelStats positions={positions} />
             <InterrailMap 
               positions={positions} 
               onPositionClick={handlePositionClick}
             />
+            <TravelStats positions={positions} />
           </>
         )}
 
@@ -131,8 +204,15 @@ const App: React.FC = () => {
             <p><strong>City:</strong> {selectedPosition.city || 'Unknown'}</p>
             <p><strong>Country:</strong> {selectedPosition.country || 'Unknown'}</p>
             <p><strong>Time:</strong> {new Date(selectedPosition.timestamp).toLocaleString()}</p>
-            {selectedPosition.notes && (
-              <p><strong>Notes:</strong> {selectedPosition.notes}</p>
+            {selectedPosition.notes && selectedPosition.notes.length > 0 && (
+              <div>
+                <p><strong>Notes:</strong></p>
+                {selectedPosition.notes.map((note) => (
+                  <p key={note.id} style={{ fontSize: '0.9em', marginLeft: '10px' }}>
+                    • {note.text}
+                  </p>
+                ))}
+              </div>
             )}
             <button 
               onClick={() => setSelectedPosition(null)}
@@ -159,7 +239,8 @@ const App: React.FC = () => {
         borderTop: '1px solid #eee',
         marginTop: '40px'
       }}>
-        <p>🌍 Powered by Home Assistant & TypeScript | 🗺️ Maps by OpenStreetMap</p>
+        <p>An app by Sara & Erasmus</p>
+        <p>Powered by Home Assistant & TypeScript | Maps by OpenStreetMap</p>
         <p style={{ fontSize: '0.8em', marginTop: '8px' }}>
           Last updated: {positions.length > 0 ? 
             new Date(positions[positions.length - 1].timestamp).toLocaleString() : 

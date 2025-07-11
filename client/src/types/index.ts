@@ -1,3 +1,11 @@
+export interface Note {
+  id: string;
+  text: string;
+  timestamp: string;
+  source: 'telegram' | 'manual' | 'home_assistant';
+  telegram_user?: string;
+}
+
 export interface Position {
   id: string;
   timestamp: string; // ISO string format
@@ -5,7 +13,8 @@ export interface Position {
   longitude: number;
   city?: string;
   country?: string;
-  notes?: string;
+  notes: Note[];
+  source: 'home_assistant' | 'telegram' | 'manual';
 }
 
 export interface CreatePositionRequest {

@@ -30,15 +30,39 @@ export class DatabaseManager {
         longitude REAL NOT NULL,
         city TEXT,
         country TEXT,
-        notes TEXT,
+        source TEXT DEFAULT 'manual',
         created_at TEXT DEFAULT CURRENT_TIMESTAMP
       )
     `);
 
-    // Create index for faster timestamp queries
+    // Create notes table
+    this.db.exec(`
+      CREATE TABLE IF NOT EXISTS notes (
+        id TEXT PRIMARY KEY,
+        position_id TEXT NOT NULL,
+        text TEXT NOT NULL,
+        timestamp TEXT NOT NULL,
+        source TEXT NOT NULL,
+        telegram_user TEXT,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (position_id) REFERENCES positions (id) ON DELETE CASCADE
+      )
+    `);
+
+    // Create indexes for faster queries
     this.db.exec(`
       CREATE INDEX IF NOT EXISTS idx_positions_timestamp 
       ON positions(timestamp)
+    `);
+
+    this.db.exec(`
+      CREATE INDEX IF NOT EXISTS idx_notes_position_id 
+      ON notes(position_id)
+    `);
+
+    this.db.exec(`
+      CREATE INDEX IF NOT EXISTS idx_notes_timestamp 
+      ON notes(timestamp)
     `);
 
     console.log('Database initialized successfully');

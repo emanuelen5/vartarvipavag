@@ -7,7 +7,9 @@ import { mkdirSync } from 'fs';
 import { join } from 'path';
 
 import positionsRouter from './routes/positions';
+import telegramRouter, { initializeTelegramBot } from './routes/telegram';
 import { DatabaseManager } from './models/database';
+import { TelegramBotService } from './services/TelegramBot';
 
 // Load environment variables
 dotenv.config();
@@ -34,6 +36,24 @@ try {
 // Initialize database
 DatabaseManager.getInstance();
 
+// Initialize Telegram bot
+const telegramBot = new TelegramBotService({
+  token: process.env.TELEGRAM_BOT_TOKEN || '',
+  pollingInterval: parseInt(process.env.TELEGRAM_POLLING_INTERVAL || '1000')
+});
+
+if (process.env.TELEGRAM_BOT_TOKEN) {
+  telegramBot.initialize();
+  initializeTelegramBot(telegramBot);
+  
+  // Start polling for messages
+  telegramBot.startPolling().catch(error => {
+    console.error('Failed to start Telegram polling:', error);
+  });
+} else {
+  console.log('ℹ️  Telegram bot token not configured, Telegram integration disabled');
+}
+
 // Middleware
 app.use(cors({
   origin: process.env.CLIENT_URL || "http://localhost:3000",
@@ -57,6 +77,7 @@ app.get('/health', (req, res) => {
 
 // API routes
 app.use('/api/positions', positionsRouter);
+app.use('/api/telegram', telegramRouter);
 
 // Socket.IO for real-time updates
 io.on('connection', (socket) => {
@@ -85,8 +106,14 @@ app.use('*', (req, res) => {
 });
 
 // Graceful shutdown
-process.on('SIGTERM', () => {
+process.on('SIGTERM', async () => {
   console.log('SIGTERM received, shutting down gracefully...');
+  
+  // Stop Telegram polling
+  if (telegramBot.isInitialized()) {
+    await telegramBot.stopPolling();
+  }
+  
   server.close(() => {
     console.log('Server closed');
     DatabaseManager.getInstance().close();
@@ -94,8 +121,14 @@ process.on('SIGTERM', () => {
   });
 });
 
-process.on('SIGINT', () => {
+process.on('SIGINT', async () => {
   console.log('SIGINT received, shutting down gracefully...');
+  
+  // Stop Telegram polling
+  if (telegramBot.isInitialized()) {
+    await telegramBot.stopPolling();
+  }
+  
   server.close(() => {
     console.log('Server closed');
     DatabaseManager.getInstance().close();

@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { PositionModel } from '../models/Position';
 import { securityMiddleware } from '../middleware/security';
-import { CreatePositionRequest, UpdatePositionRequest, ApiResponse, Position } from '../types';
+import { CreatePositionRequest, UpdatePositionRequest, ApiResponse, Position, AddNoteRequest, Note } from '../types';
 
 const router = Router();
 const positionModel = new PositionModel();
@@ -204,6 +204,86 @@ router.delete('/:id', securityMiddleware.localhostOnly, async (req: Request, res
     const response: ApiResponse<null> = {
       success: false,
       error: 'Failed to delete position'
+    };
+    
+    res.status(500).json(response);
+  }
+});
+
+// POST /api/positions/:id/notes - Add note to position (localhost only)
+router.post('/:id/notes', securityMiddleware.localhostOnly, async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const noteRequest: AddNoteRequest = req.body;
+    
+    // Validate required fields
+    if (!noteRequest.text) {
+      const response: ApiResponse<null> = {
+        success: false,
+        error: 'Note text is required'
+      };
+      
+      res.status(400).json(response);
+      return;
+    }
+    
+    const note = await positionModel.addNote(id, noteRequest);
+    
+    if (!note) {
+      const response: ApiResponse<null> = {
+        success: false,
+        error: 'Position not found'
+      };
+      
+      res.status(404).json(response);
+      return;
+    }
+    
+    const response: ApiResponse<Note> = {
+      success: true,
+      data: note
+    };
+    
+    res.status(201).json(response);
+  } catch (error) {
+    console.error('Error adding note:', error);
+    
+    const response: ApiResponse<null> = {
+      success: false,
+      error: 'Failed to add note'
+    };
+    
+    res.status(500).json(response);
+  }
+});
+
+// GET /api/positions/latest - Get latest position (public read access)
+router.get('/latest', async (req: Request, res: Response) => {
+  try {
+    const position = await positionModel.getLatestPosition();
+    
+    if (!position) {
+      const response: ApiResponse<null> = {
+        success: false,
+        error: 'No positions found'
+      };
+      
+      res.status(404).json(response);
+      return;
+    }
+    
+    const response: ApiResponse<Position> = {
+      success: true,
+      data: position
+    };
+    
+    res.json(response);
+  } catch (error) {
+    console.error('Error fetching latest position:', error);
+    
+    const response: ApiResponse<null> = {
+      success: false,
+      error: 'Failed to fetch latest position'
     };
     
     res.status(500).json(response);
