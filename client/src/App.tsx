@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import InterrailMap from './components/InterrailMap';
 import TravelStats from './components/TravelStats';
 import { Position } from './types';
-import PositionService from './services/api';
 
 const App: React.FC = () => {
   const [positions, setPositions] = useState<Position[]>([]);
