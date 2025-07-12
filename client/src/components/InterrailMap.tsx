@@ -175,11 +175,18 @@ const InterrailMap: React.FC<InterrailMapProps> = ({ positions }) => {
   };
 
   // Format date for night stops: "Tis 13 december"
+  // Shows the date of the evening/night
   const formatDateNightStop = (dateString: string): string => {
     const date = new Date(dateString);
-    const weekday = date.toLocaleDateString('sv-SE', { weekday: 'short' });
-    const day = date.getDate();
-    const month = date.toLocaleDateString('sv-SE', { month: 'long' });
+    
+    // For night stops, we want to show the date of the evening before
+    // If timestamp is 2024-07-03T00:15:00Z, we want to show July 2nd
+    // because that's the night between July 2nd and July 3rd
+    const nightDate = new Date(date.getTime() - 24 * 60 * 60 * 1000); // Subtract 24 hours
+    
+    const weekday = nightDate.toLocaleDateString('sv-SE', { weekday: 'short' });
+    const day = nightDate.getDate();
+    const month = nightDate.toLocaleDateString('sv-SE', { month: 'long' });
     
     return `${weekday} ${day} ${month}`;
   };
@@ -189,8 +196,9 @@ const InterrailMap: React.FC<InterrailMapProps> = ({ positions }) => {
     const date = new Date(dateString);
     const weekday = date.toLocaleDateString('sv-SE', { weekday: 'short' });
     const time = date.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' });
-    
-    return `${weekday} kl ${time}`;
+    const day = date.getDate();
+    const month = date.getMonth()+1;
+    return `${weekday} ${day}/${month} kl ${time}`;
   };
 
   // Format date for info box: "Monday, 13 dec, kl HH:XX"
@@ -198,10 +206,13 @@ const InterrailMap: React.FC<InterrailMapProps> = ({ positions }) => {
     const date = new Date(dateString);
     const weekday = date.toLocaleDateString('sv-SE', { weekday: 'long' });
     const day = date.getDate();
-    const month = date.toLocaleDateString('sv-SE', { month: 'short' });
+    const month = date.toLocaleDateString('sv-SE', { month: 'long' });
     const time = date.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' });
     
-    return `${weekday}, ${day} ${month}, kl ${time}`;
+    // Capitalize first letter of weekday
+    const capitalizedWeekday = weekday.charAt(0).toUpperCase() + weekday.slice(1);
+    
+    return `${capitalizedWeekday}, ${day} ${month}, kl ${time}`;
   };
 
   // Auto-fit map to show all positions
