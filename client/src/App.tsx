@@ -16,81 +16,33 @@ const App: React.FC = () => {
       setLoading(true);
       setError(null);
       
-      /* // Temporarily use fake data for preview
+      // Temporarily use fake data for preview
       const fakeData: Position[] = [
         {
           id: '1',
           timestamp: '2024-12-15T10:00:00Z',
           latitude: 59.3293,
-          longitude: 18.0686,
-          city: 'Stockholm',
-          country: 'Sweden',
-          source: 'home_assistant',
-          notes: [
-            {
-              id: '1',
-              text: 'Starting our amazing interrail journey! 🚂✨',
-              timestamp: '2024-12-15T10:30:00Z',
-              source: 'manual'
-            }
-          ]
+          longitude: 18.0686
         },
         {
           id: '2',
           timestamp: '2024-12-16T14:20:00Z',
           latitude: 55.6761,
-          longitude: 12.5683,
-          city: 'Copenhagen',
-          country: 'Denmark',
-          source: 'telegram',
-          notes: [
-            {
-              id: '2',
-              text: 'The train ride was spectacular! Amazing views of the countryside 🌾',
-              timestamp: '2024-12-16T14:30:00Z',
-              source: 'telegram',
-              telegram_user: 'Sara'
-            },
-            {
-              id: '3',
-              text: 'Trying Danish pastries at the station - absolutely delicious! 🥐',
-              timestamp: '2024-12-16T15:45:00Z',
-              source: 'telegram',
-              telegram_user: 'Erasmus'
-            }
-          ]
+          longitude: 12.5683
         },
         {
           id: '3',
           timestamp: '2024-12-17T09:15:00Z',
           latitude: 52.5200,
-          longitude: 13.4050,
-          city: 'Berlin',
-          country: 'Germany',
-          source: 'telegram',
-          notes: [
-            {
-              id: '4',
-              text: 'Berlin is incredible! The history here is amazing 🏛️',
-              timestamp: '2024-12-17T09:30:00Z',
-              source: 'telegram',
-              telegram_user: 'Sara'
-            },
-            {
-              id: '5',
-              text: 'Brandenburg Gate at sunset was breathtaking',
-              timestamp: '2024-12-17T18:22:00Z',
-              source: 'manual'
-            }
-          ]
+          longitude: 13.4050
         }
       ];
       
-      setPositions(fakeData); */
+      setPositions(fakeData);
       
       // Uncomment this to use real API data instead
-      const data = await PositionService.getAllPositions();
-      setPositions(data);
+      // const data = await PositionService.getAllPositions();
+      //setPositions(data);
     } catch (err) {
       console.error('Error fetching positions:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch positions');
@@ -126,22 +78,6 @@ const App: React.FC = () => {
         <div className="container">
           <h1>Sara & Erasmus</h1>
           <h2>Interrail 2025 🚂</h2>
-          {/* <button 
-            onClick={handleRefresh} 
-            disabled={loading}
-            style={{
-              background: loading ? '#ccc' : '#ae3c40',
-              color: 'white',
-              border: 'none',
-              padding: '8px 16px',
-              borderRadius: '4px',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              fontSize: '14px',
-              marginTop: '8px'
-            }}
-          >
-            {loading ? '🔄 Refreshing...' : '🔄 Refresh'}
-          </button> */}
         </div>
       </header>
 
@@ -201,19 +137,8 @@ const App: React.FC = () => {
             <h4 style={{ margin: '0 0 8px 0' }}>
               📍 Vald position
             </h4>
-            <p><strong>Stad:</strong> {selectedPosition.city || 'Okänd'}</p>
-            <p><strong>Land:</strong> {selectedPosition.country || 'Okänd'}</p>
+            <p><strong>Koordinater:</strong> {selectedPosition.latitude.toFixed(4)}, {selectedPosition.longitude.toFixed(4)}</p>
             <p><strong>Tid:</strong> {new Date(selectedPosition.timestamp).toLocaleString()}</p>
-            {selectedPosition.notes && selectedPosition.notes.length > 0 && (
-              <div>
-                <p><strong>Anteckningar:</strong></p>
-                {selectedPosition.notes.map((note) => (
-                  <p key={note.id} style={{ fontSize: '0.9em', marginLeft: '10px' }}>
-                    • {note.text}
-                  </p>
-                ))}
-              </div>
-            )}
             <button 
               onClick={() => setSelectedPosition(null)}
               style={{

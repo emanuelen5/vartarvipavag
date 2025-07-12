@@ -155,18 +155,6 @@ const InterrailMap: React.FC<InterrailMapProps> = ({ positions, onPositionClick 
                     <strong>📅 {formatDate(position.timestamp)}</strong>
                   </div>
                   
-                  {position.city && (
-                    <div style={{ marginBottom: '4px' }}>
-                      <strong>🏙️ Stad:</strong> {position.city}
-                    </div>
-                  )}
-                  
-                  {position.country && (
-                    <div style={{ marginBottom: '4px' }}>
-                      <strong>🇪🇺 Land:</strong> {position.country}
-                    </div>
-                  )}
-                  
                   <div style={{ marginBottom: '4px', fontSize: '0.9em', color: '#666' }}>
                     <strong>🌍 Koordinater:</strong> {position.latitude.toFixed(4)}, {position.longitude.toFixed(4)}
                   </div>
@@ -174,31 +162,6 @@ const InterrailMap: React.FC<InterrailMapProps> = ({ positions, onPositionClick 
                   {distanceFromPrevious > 0 && (
                     <div style={{ marginBottom: '4px', fontSize: '0.9em', color: '#666' }}>
                       <strong>🛤️ Avstånd:</strong> {distanceFromPrevious.toFixed(1)} km
-                    </div>
-                  )}
-                  
-                  {position.notes && position.notes.length > 0 && (
-                    <div style={{ marginTop: '8px' }}>
-                      <strong>📝 Anteckningar:</strong>
-                      {position.notes.map((note) => (
-                        <div key={note.id} style={{ 
-                          marginTop: '4px', 
-                          padding: '4px', 
-                          background: note.source === 'telegram' ? '#e3f2fd' : '#f0f0f0', 
-                          borderRadius: '4px',
-                          fontSize: '0.9em'
-                        }}>
-                          <div style={{ fontWeight: 'normal' }}>
-                            {note.source === 'telegram' && '📱 '}
-                            {note.source === 'home_assistant' && '🏠 '}
-                            {note.text}
-                          </div>
-                          <div style={{ fontSize: '0.8em', color: '#666', marginTop: '2px' }}>
-                            {new Date(note.timestamp).toLocaleString()}
-                            {note.telegram_user && ` • ${note.telegram_user}`}
-                          </div>
-                        </div>
-                      ))}
                     </div>
                   )}
                 </div>

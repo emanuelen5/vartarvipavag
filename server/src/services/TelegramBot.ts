@@ -1,6 +1,6 @@
 import TelegramBot from 'node-telegram-bot-api';
 import { PositionModel } from '../models/Position';
-import { CreatePositionRequest, AddNoteRequest } from '../types';
+import { CreatePositionRequest } from '../types';
 
 export interface TelegramConfig {
   token: string;
@@ -130,18 +130,10 @@ export class TelegramBotService {
       // Create new position from location
       const positionRequest: CreatePositionRequest = {
         latitude: location.latitude,
-        longitude: location.longitude,
-        source: 'telegram'
+        longitude: location.longitude
       };
 
       const position = await this.positionModel.create(positionRequest);
-
-      // Add a note indicating this was shared via Telegram
-      await this.positionModel.addNote(position.id, {
-        text: `📍 Location shared via Telegram by ${username}`,
-        source: 'telegram',
-        telegram_user: username
-      });
 
       await this.sendMessage(
         chatId, 
@@ -166,42 +158,12 @@ export class TelegramBotService {
       return;
     }
 
-    // Handle regular text messages as notes to latest position
-    try {
-      const latestPosition = await this.positionModel.getLatestPosition();
-      
-      if (!latestPosition) {
-        await this.sendMessage(
-          chatId, 
-          '📍 No positions found yet! Share your location first or use /help for more options.'
-        );
-        return;
-      }
-
-      // Add note to latest position
-      await this.positionModel.addNote(latestPosition.id, {
-        text: text,
-        source: 'telegram',
-        telegram_user: username
-      });
-
-      const locationName = latestPosition.city 
-        ? `${latestPosition.city}${latestPosition.country ? `, ${latestPosition.country}` : ''}`
-        : `${latestPosition.latitude.toFixed(4)}, ${latestPosition.longitude.toFixed(4)}`;
-
-      await this.sendMessage(
-        chatId,
-        `✅ Note added to your latest position!\n\n` +
-        `📍 Location: ${locationName}\n` +
-        `💬 Note: "${text}"\n` +
-        `🕐 Time: ${new Date().toLocaleString()}\n\n` +
-        `View on your map: http://localhost:3000`
-      );
-
-    } catch (error) {
-      console.error('Error adding note:', error);
-      await this.sendMessage(chatId, '❌ Failed to add note to your journey.');
-    }
+    // For regular text messages, just acknowledge since we no longer support notes
+    await this.sendMessage(
+      chatId, 
+      `📍 Thanks for the message! This bot now only supports adding locations.\n\n` +
+      `Share your location to add a new position to your journey, or use /help for more options.`
+    );
   }
 
   private async handleCommand(chatId: number, command: string, username: string): Promise<void> {
@@ -233,9 +195,8 @@ export class TelegramBotService {
   private async sendWelcomeMessage(chatId: number): Promise<void> {
     const message = 
       `🚂 Welcome to your Interrail Journey Tracker!\n\n` +
-      `I can help you update your travel map with notes and locations.\n\n` +
+      `I can help you add locations to your travel map.\n\n` +
       `📍 Share your location to add a new stop\n` +
-      `💬 Send any text to add a note to your latest position\n` +
       `📊 Use /stats to see your journey statistics\n` +
       `❓ Use /help for more commands\n\n` +
       `🗺️ View your journey: http://localhost:3000`;
@@ -247,7 +208,6 @@ export class TelegramBotService {
     const message = 
       `🤖 Available Commands:\n\n` +
       `📍 Share Location - Add new position to your journey\n` +
-      `💬 Send Text - Add note to your latest position\n` +
       `/stats - View journey statistics\n` +
       `/latest - Show your latest position\n` +
       `/help - Show this help message\n\n` +
@@ -267,8 +227,6 @@ export class TelegramBotService {
 
       // Calculate statistics
       let totalDistance = 0;
-      const countries = new Set<string>();
-      const cities = new Set<string>();
 
       for (let i = 1; i < positions.length; i++) {
         const prev = positions[i - 1];
@@ -277,9 +235,6 @@ export class TelegramBotService {
           prev.latitude, prev.longitude,
           current.latitude, current.longitude
         );
-
-        if (current.country) countries.add(current.country);
-        if (current.city) cities.add(current.city);
       }
 
       const duration = positions.length > 1 
@@ -290,8 +245,6 @@ export class TelegramBotService {
       const message = 
         `📊 Your Interrail Journey Stats:\n\n` +
         `🛤️ Total Distance: ${totalDistance.toFixed(1)} km\n` +
-        `🇪🇺 Countries: ${countries.size}\n` +
-        `🏙️ Cities: ${cities.size}\n` +
         `📅 Duration: ${duration} days\n` +
         `📍 Total Stops: ${positions.length}\n\n` +
         `🗺️ View your journey: http://localhost:3000`;
@@ -312,13 +265,8 @@ export class TelegramBotService {
         return;
       }
 
-      const locationName = latestPosition.city 
-        ? `${latestPosition.city}${latestPosition.country ? `, ${latestPosition.country}` : ''}`
-        : `${latestPosition.latitude.toFixed(4)}, ${latestPosition.longitude.toFixed(4)}`;
-
       const message = 
         `📍 Your Latest Position:\n\n` +
-        `🗺️ Location: ${locationName}\n` +
         `📊 Coordinates: ${latestPosition.latitude.toFixed(4)}, ${latestPosition.longitude.toFixed(4)}\n` +
         `🕐 Time: ${new Date(latestPosition.timestamp).toLocaleString()}\n\n` +
         `View on your map: http://localhost:3000`;

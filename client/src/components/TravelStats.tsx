@@ -32,40 +32,6 @@ const TravelStats: React.FC<TravelStatsProps> = ({ positions }) => {
     return R * c;
   };
 
-  // Calculate unique countries
-  const getUniqueCountries = (): string[] => {
-    const countries = positions
-      .map(pos => pos.country)
-      .filter((country): country is string => Boolean(country));
-    return Array.from(new Set(countries));
-  };
-
-  // Calculate unique cities
-  const getUniqueCities = (): string[] => {
-    const cities = positions
-      .map(pos => pos.city)
-      .filter((city): city is string => Boolean(city));
-    return Array.from(new Set(cities));
-  };
-
-  // Calculate total notes
-  const getTotalNotes = (): number => {
-    return positions.reduce((total, pos) => total + (pos.notes?.length || 0), 0);
-  };
-
-  // Get notes by source
-  const getNotesBySource = (): { telegram: number; homeAssistant: number; manual: number } => {
-    const counts = { telegram: 0, homeAssistant: 0, manual: 0 };
-    positions.forEach(pos => {
-      pos.notes?.forEach(note => {
-        if (note.source === 'telegram') counts.telegram++;
-        else if (note.source === 'home_assistant') counts.homeAssistant++;
-        else counts.manual++;
-      });
-    });
-    return counts;
-  };
-
   // Calculate journey duration
   const getJourneyDuration = (): number => {
     if (positions.length < 2) return 0;
@@ -77,14 +43,8 @@ const TravelStats: React.FC<TravelStatsProps> = ({ positions }) => {
     return diffDays;
   };
 
-
-
   const totalDistance = calculateTotalDistance();
-  const uniqueCountries = getUniqueCountries();
-  const uniqueCities = getUniqueCities();
   const journeyDuration = getJourneyDuration();
-  const totalNotes = getTotalNotes();
-  const notesBySource = getNotesBySource();
 
   if (positions.length === 0) {
     return (
@@ -106,25 +66,6 @@ const TravelStats: React.FC<TravelStatsProps> = ({ positions }) => {
       </div>
       
       <div className="stat-card">
-        <h3>🇪🇺 Besökta länder</h3>
-        <p className="value">{uniqueCountries.length}</p>
-        <p className="label">
-          {uniqueCountries.length > 0 ? uniqueCountries.join(', ') : 'Inga ännu'}
-        </p>
-      </div>
-      
-      <div className="stat-card">
-        <h3>🏙️ Besökta städer</h3>
-        <p className="value">{uniqueCities.length}</p>
-        <p className="label">
-          {uniqueCities.length > 0 ? 
-            uniqueCities.slice(0, 3).join(', ') + (uniqueCities.length > 3 ? '...' : '') : 
-            'Inga ännu'
-          }
-        </p>
-      </div>
-      
-      <div className="stat-card">
         <h3>📅 Reselängd</h3>
         <p className="value">{journeyDuration}</p>
         <p className="label">
@@ -138,30 +79,9 @@ const TravelStats: React.FC<TravelStatsProps> = ({ positions }) => {
       </div>
       
       <div className="stat-card">
-        <h3>📍 Total Positions</h3>
+        <h3>📍 Antal positioner</h3>
         <p className="value">{positions.length}</p>
-        <p className="label">tracked locations</p>
-      </div>
-      
-      <div className="stat-card">
-        <h3>⚡ Average Speed</h3>
-        <p className="value">
-          {journeyDuration > 0 ? (totalDistance / journeyDuration).toFixed(1) : '0.0'}
-        </p>
-        <p className="label">km/day</p>
-      </div>
-      
-      <div className="stat-card">
-        <h3>💬 Travel Notes</h3>
-        <p className="value">{totalNotes}</p>
-        <p className="label">
-          {notesBySource.telegram > 0 && `📱 ${notesBySource.telegram} from Telegram`}
-          {notesBySource.telegram > 0 && (notesBySource.homeAssistant > 0 || notesBySource.manual > 0) && <br />}
-          {notesBySource.homeAssistant > 0 && `🏠 ${notesBySource.homeAssistant} from Home Assistant`}
-          {notesBySource.homeAssistant > 0 && notesBySource.manual > 0 && <br />}
-          {notesBySource.manual > 0 && `✏️ ${notesBySource.manual} manual`}
-          {totalNotes === 0 && 'Start adding notes!'}
-        </p>
+        <p className="label">spårade platser</p>
       </div>
     </div>
   );
