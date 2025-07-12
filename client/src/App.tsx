@@ -15,10 +15,13 @@ const App: React.FC = () => {
       setLoading(true);
       setError(null);
       
-      if (import.meta.env.DEV) {
+      // If local, use fake data, otherwise use API
+      if (import.meta.env.DEV && !import.meta.env.VITE_API_URL) {
+        console.log('Using fake data');
         const data = fakeInterrailData;
         setPositions(data);
       } else {
+        console.log('Using API');
         const data = await PositionService.getAllPositions();
         setPositions(data);
       }

@@ -1,5 +1,4 @@
 import express from 'express';
-import cors from 'cors';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import dotenv from 'dotenv';
@@ -17,9 +16,9 @@ dotenv.config();
 const app = express();
 const server = createServer(app);
 const io = new Server(server, {
+  // CORS is handled by nginx
   cors: {
-    origin: process.env.CLIENT_URL || "http://localhost:3000",
-    methods: ["GET", "POST"]
+    origin: false // Disable CORS handling in Socket.IO
   }
 });
 
@@ -55,11 +54,7 @@ if (process.env.TELEGRAM_BOT_TOKEN) {
 }
 
 // Middleware
-app.use(cors({
-  origin: process.env.CLIENT_URL || "http://localhost:3000",
-  credentials: true
-}));
-
+// Note: CORS is handled by nginx, not by Express
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
