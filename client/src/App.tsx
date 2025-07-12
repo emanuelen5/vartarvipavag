@@ -15,9 +15,7 @@ const App: React.FC = () => {
       setLoading(true);
       setError(null);
       
-      // Temporarily use fake data for preview
-      // setPositions(fakeInterrailData);
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.DEV) {
         const data = fakeInterrailData;
         setPositions(data);
       } else {
