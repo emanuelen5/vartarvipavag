@@ -22,7 +22,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yourusername/vartarvipavag.git"
+    "url": "git+https://github.com/emanuelen5/vartarvipavag.git"
   },
   "keywords": [
     "interrail",
@@ -33,6 +33,6 @@
     "typescript",
     "home-assistant"
   ],
-  "author": "",
-  "license": "ISC"
+  "author": "Sara Danielsson, Erasmus Cedernaes",
+  "license": "GPLv3"
 } 
