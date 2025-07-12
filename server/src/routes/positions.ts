@@ -29,40 +29,6 @@ router.get('/', async (req: Request, res: Response) => {
   }
 });
 
-// GET /api/positions/:id - Get single position (public read access)
-router.get('/:id', async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    const position = await positionModel.findById(id);
-    
-    if (!position) {
-      const response: ApiResponse<null> = {
-        success: false,
-        error: 'Position not found'
-      };
-      
-      res.status(404).json(response);
-      return;
-    }
-    
-    const response: ApiResponse<Position> = {
-      success: true,
-      data: position
-    };
-    
-    res.json(response);
-  } catch (error) {
-    console.error('Error fetching position:', error);
-    
-    const response: ApiResponse<null> = {
-      success: false,
-      error: 'Failed to fetch position'
-    };
-    
-    res.status(500).json(response);
-  }
-});
-
 // POST /api/positions - Create new position (localhost only)
 router.post('/', securityMiddleware.localhostOnly, async (req: Request, res: Response) => {
   try {
