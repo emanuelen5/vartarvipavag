@@ -156,14 +156,22 @@ const InterrailMap: React.FC<InterrailMapProps> = ({ positions }) => {
   // Create polyline coordinates for the journey path
   const polylineCoordinates: [number, number][] = positions.map(pos => [pos.latitude, pos.longitude]);
 
-  // Determine position type from timestamp
+  // Determine position type from timestamp with tolerance for automation lag
   const getPositionType = (timestamp: string): 'night_stop' | 'daily_position' => {
     const date = new Date(timestamp);
     const hour = date.getUTCHours();
+    const minute = date.getUTCMinutes();
     
-    // If the hour is 0 (midnight UTC), it's a night stop
-    // All other hours are daily positions
-    return hour === 0 ? 'night_stop' : 'daily_position';
+    // Consider it a night stop if:
+    // - Between 23:30 and 23:59 (late night of previous day)
+    // - Between 00:00 and 00:30 (early morning of current day)
+    // This accounts for automation lag and timezone edge cases
+    if ((hour === 23 && minute >= 30) || (hour === 0 && minute <= 30)) {
+      return 'night_stop';
+    }
+    
+    // All other times are daily positions
+    return 'daily_position';
   };
 
   // Format date for night stops: "Tis 13 december"
