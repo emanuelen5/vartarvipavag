@@ -19,13 +19,15 @@ export class SecurityMiddleware {
 
   public localhostOnly = (req: Request, res: Response, next: NextFunction): void => {
     const clientIP = this.getClientIP(req);
-    
+
     console.log(`Write request from IP: ${clientIP}`);
     
-    if (!this.isAllowedIP(clientIP)) {
+    // Check if the request has proxy headers (indicating it came from outside)
+    const hasProxyHeaders = req.headers['x-forwarded-for'] || req.headers['x-real-ip'];
+    if (hasProxyHeaders) {
       res.status(403).json({ 
         success: false, 
-        error: 'Write operations are restricted to localhost only' 
+        error: 'Write operations are restricted to internal network only' 
       });
       return;
     }
