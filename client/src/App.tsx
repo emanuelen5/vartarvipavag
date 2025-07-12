@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import InterrailMap from './components/InterrailMap';
 import TravelStats from './components/TravelStats';
 import { Position } from './types';
-import { PositionService, randomizePosition } from './services/api';
+import { PositionService, deterministicRandomizePosition } from './services/api';
 import { fakeInterrailData } from './data/fakeData';
 
 const App: React.FC = () => {
@@ -25,8 +25,7 @@ const App: React.FC = () => {
         data = await PositionService.getAllPositions();
       }
 
-      data = data.map(p => randomizePosition(p));
-      setPositions(data);
+      setPositions(deterministicRandomizePosition(data));
       
     } catch (err) {
       console.error('Error fetching positions:', err);

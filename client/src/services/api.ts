@@ -31,31 +31,32 @@ api.interceptors.response.use(
   },
   (error) => {
     console.error('API Response Error:', error);
-    
+
     if (error.response?.status === 403) {
       console.error('Write operations are restricted to localhost');
     }
-    
+
     return Promise.reject(error);
   }
 );
 
-const rng = seedrandom("42"); // Create a seeded random number generator
+function getRandomOffset(rng: () => number, range: number): number {
+  return (rng() * 2 * range) - range;
+}
 
-/**
- * Randomize a position based on its ID using a static seed.
- * @param id - The unique ID of the position.
- * @param position - The original position to randomize.
- * @returns A randomized position.
- */
-export function randomizePosition(position: Position): Position {
-  const latOffset = (rng() * 0.008) - 0.004; // Latitude offset in range [-0.01, 0.01]
-  const lonOffset = (rng() * 0.008) - 0.004; // Longitude offset in range [-0.01, 0.01]
+function randomizePosition(rng: () => number, position: Position): Position {
+  const latOffset = getRandomOffset(rng, 0.002);
+  const lonOffset = getRandomOffset(rng, 0.002);
   return {
     ...position,
     latitude: position.latitude + latOffset,
     longitude: position.longitude + lonOffset,
   };
+}
+
+export function deterministicRandomizePosition(positions: Position[]): Position[] {
+  const rng = seedrandom("42");
+  return positions.map((position) => randomizePosition(rng, position));
 }
 
 export class PositionService {
@@ -65,11 +66,11 @@ export class PositionService {
   static async getAllPositions(): Promise<Position[]> {
     try {
       const response = await api.get<ApiResponse<Position[]>>('/api/positions');
-      
+
       if (!response.data.success) {
         throw new Error(response.data.error || 'Failed to fetch positions');
       }
-      
+
       return response.data.data || [];
     } catch (error) {
       console.error('Error fetching positions:', error);
@@ -91,4 +92,4 @@ export class PositionService {
   }
 }
 
-export default PositionService; 
+export default PositionService;
