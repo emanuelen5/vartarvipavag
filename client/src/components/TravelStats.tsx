@@ -46,6 +46,13 @@ const TravelStats: React.FC<TravelStatsProps> = ({ positions }) => {
   const totalDistance = calculateTotalDistance();
   const journeyDuration = getJourneyDuration();
 
+  // Format date as "day month"
+  const formatDate = (date: Date): string => {
+    const day = date.getDate();
+    const month = date.toLocaleDateString('sv-SE', { month: 'long' });
+    return `${day} ${month}`;
+  };
+
   if (positions.length === 0) {
     return (
       <div className="stats-container">
@@ -66,13 +73,13 @@ const TravelStats: React.FC<TravelStatsProps> = ({ positions }) => {
       </div>
       
       <div className="stat-card">
-        <h3>📅 Reselängd</h3>
+        <h3>📅 Antal dagar</h3>
         <p className="value">{journeyDuration}</p>
         <p className="label">
           {journeyDuration === 1 ? 'dag' : 'dagar'}
           {journeyDuration > 0 && (
             <span style={{ display: 'block', fontSize: '0.8em', marginTop: '0.25rem' }}>
-              {new Date(positions[0].timestamp).toLocaleDateString()} - {new Date(positions[positions.length - 1].timestamp).toLocaleDateString()}
+              {formatDate(new Date(positions[0].timestamp))} – {formatDate(new Date(positions[positions.length - 1].timestamp))}
             </span>
           )}
         </p>

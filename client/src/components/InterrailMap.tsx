@@ -12,7 +12,7 @@ L.Icon.Default.mergeOptions({
 });
 
 // Custom popup styles and marker layering
-const popupStyle = `
+const mapStyle = `
   .leaflet-popup-content-wrapper {
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -122,7 +122,7 @@ const InterrailMap: React.FC<InterrailMapProps> = ({ positions }) => {
         width: 25px;
         height: 25px;
         border-radius: 50%;
-        border: 3px solid white;
+        border: 2px solid white;
         box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         z-index: 1000;
         position: relative;
@@ -226,7 +226,7 @@ const InterrailMap: React.FC<InterrailMapProps> = ({ positions }) => {
   // Add custom styles to the document head
   useEffect(() => {
     const styleElement = document.createElement('style');
-    styleElement.innerHTML = popupStyle;
+    styleElement.innerHTML = mapStyle;
     document.head.appendChild(styleElement);
     
     return () => {
