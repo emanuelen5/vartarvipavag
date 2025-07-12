@@ -40,6 +40,9 @@ docker run --rm -p 3001:3001 --volume $(pwd)/data:/data ghcr.io/emanuelen5/varta
 
 Then you need to also host the client / front-end somewhere (like through Github pages, as we do).
 
+> [!NOTE]
+> You'll need to set the Github repository secret `API_URL` to the URL of your backend if you build yourself for Github pages.
+
 ## 🏗️ Architecture
 
 **Frontend (React + TypeScript)**
