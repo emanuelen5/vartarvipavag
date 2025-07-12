@@ -6,7 +6,7 @@ A real-time web application for tracking and visualizing our European interrail 
 
 We (Sara and Ersamus) interrailing 2025 and wanted to play around with different vibe coding tools for learning purposes, so created this not-too-useful app for our friends and families to follow our trip!
 
-## 🚀 Quick Setup
+## 🚀 Quick development setup
 
 1. **Clone and install**
    ```bash
@@ -28,6 +28,17 @@ We (Sara and Ersamus) interrailing 2025 and wanted to play around with different
 3. **Open in browser**
    - Frontend: http://localhost:3000
    - Backend: http://localhost:3001
+
+## Deployment
+
+Configure NGINX and Homeassistant as described in [./config/README.md](./config/README.md), and then download the pre-built docker image (or build it yourself) for the server:
+
+```
+docker pull ghcr.io/emanuelen5/vartarvipavag-server:main
+docker run --rm -p 3001:3001 --volume $(pwd)/data:/data ghcr.io/emanuelen5/vartarvipavag-server:main
+```
+
+Then you need to also host the client / front-end somewhere (like through Github pages, as we do).
 
 ## 🏗️ Architecture
 
