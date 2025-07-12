@@ -7,8 +7,6 @@ const App: React.FC = () => {
   const [positions, setPositions] = useState<Position[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedPosition, setSelectedPosition] = useState<Position | null>(null);
-
   // Fetch positions from API
   const fetchPositions = async (): Promise<void> => {
     try {
@@ -61,11 +59,6 @@ const App: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Handle position selection
-  const handlePositionClick = (position: Position): void => {
-    setSelectedPosition(position);
-  };
-
   // Handle refresh button
   const handleRefresh = (): void => {
     fetchPositions();
@@ -113,46 +106,9 @@ const App: React.FC = () => {
           <>
             <InterrailMap 
               positions={positions} 
-              onPositionClick={handlePositionClick}
             />
             <TravelStats positions={positions} />
           </>
-        )}
-
-        {selectedPosition && (
-          <div 
-            style={{
-              position: 'fixed',
-              top: '20px',
-              right: '20px',
-              background: 'white',
-              padding: '16px',
-              borderRadius: '8px',
-              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-              maxWidth: '300px',
-              zIndex: 1000
-            }}
-          >
-            <h4 style={{ margin: '0 0 8px 0' }}>
-              📍 Vald position
-            </h4>
-            <p><strong>Koordinater:</strong> {selectedPosition.latitude.toFixed(4)}, {selectedPosition.longitude.toFixed(4)}</p>
-            <p><strong>Tid:</strong> {new Date(selectedPosition.timestamp).toLocaleString()}</p>
-            <button 
-              onClick={() => setSelectedPosition(null)}
-              style={{
-                background: '#dc2626',
-                color: 'white',
-                border: 'none',
-                padding: '4px 8px',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontSize: '12px'
-              }}
-            >
-              Stäng
-            </button>
-          </div>
         )}
       </main>
 

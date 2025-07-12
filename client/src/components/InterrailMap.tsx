@@ -11,12 +11,41 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
+// Custom popup styles
+const popupStyle = `
+  .leaflet-popup-content-wrapper {
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  .leaflet-popup-content {
+    font-family: 'Courier New', monospace !important;
+    font-size: 14px;
+    line-height: 1.4;
+    margin: 8px 12px;
+  }
+  .leaflet-popup-close-button {
+    font-size: 18px !important;
+    line-height: 18px !important;
+    width: 24px !important;
+    height: 24px !important;
+    color: #666 !important;
+    font-weight: bold !important;
+    padding: 0 !important;
+    text-align: center !important;
+    top: 6px !important;
+    right: 6px !important;
+  }
+  .leaflet-popup-close-button:hover {
+    background-color: #f0f0f0 !important;
+    border-radius: 50% !important;
+  }
+`;
+
 interface InterrailMapProps {
   positions: Position[];
-  onPositionClick?: (position: Position) => void;
 }
 
-const InterrailMap: React.FC<InterrailMapProps> = ({ positions, onPositionClick }) => {
+const InterrailMap: React.FC<InterrailMapProps> = ({ positions }) => {
   const [map, setMap] = useState<L.Map | null>(null);
 
   // Europe center coordinates
@@ -50,30 +79,15 @@ const InterrailMap: React.FC<InterrailMapProps> = ({ positions, onPositionClick 
   // Create polyline coordinates for the journey path
   const polylineCoordinates: [number, number][] = positions.map(pos => [pos.latitude, pos.longitude]);
 
-  // Calculate distances between consecutive positions
-  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
-    const R = 6371; // Earth's radius in kilometers
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = 
-      Math.sin(dLat/2) * Math.sin(dLat/2) +
-      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-      Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    return R * c;
-  };
-
-  // Format date for display
+  // Format date for display in Swedish format
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      weekday: 'short',
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    const weekday = date.toLocaleDateString('sv-SE', { weekday: 'short' });
+    const day = date.getDate();
+    const month = date.toLocaleDateString('sv-SE', { month: 'short' });
+    const time = date.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' });
+    
+    return `${weekday} ${day} ${month}, kl ${time}`;
   };
 
   // Auto-fit map to show all positions
@@ -83,6 +97,17 @@ const InterrailMap: React.FC<InterrailMapProps> = ({ positions, onPositionClick 
       map.fitBounds(bounds, { padding: [20, 20] });
     }
   }, [map, positions]);
+
+  // Add custom styles to the document head
+  useEffect(() => {
+    const styleElement = document.createElement('style');
+    styleElement.innerHTML = popupStyle;
+    document.head.appendChild(styleElement);
+    
+    return () => {
+      document.head.removeChild(styleElement);
+    };
+  }, []);
 
   if (positions.length === 0) {
     return (
@@ -126,44 +151,25 @@ const InterrailMap: React.FC<InterrailMapProps> = ({ positions, onPositionClick 
           const isFirst = index === 0;
           const isLast = index === positions.length - 1;
           
-          // Calculate distance from previous position
-          let distanceFromPrevious = 0;
-          if (index > 0) {
-            const prevPos = positions[index - 1];
-            distanceFromPrevious = calculateDistance(
-              prevPos.latitude, prevPos.longitude,
-              position.latitude, position.longitude
-            );
-          }
-          
           return (
             <Marker
               key={position.id}
               position={[position.latitude, position.longitude]}
               icon={markerIcon}
-              eventHandlers={{
-                click: () => onPositionClick?.(position),
-              }}
             >
               <Popup>
-                <div style={{ minWidth: '200px' }}>
-                  <h4 style={{ margin: '0 0 8px 0', color: '#2563eb' }}>
+                <div style={{ minWidth: '180px' }}>
+                  <h4 style={{ margin: '0 0 8px 0', color: '#ae3c40' }}>
                     {isFirst ? '🚀 Resans början' : isLast ? '🏁 Nuvarande position' : `📍 Stopp ${index + 1}`}
                   </h4>
                   
-                  <div style={{ marginBottom: '8px' }}>
-                    <strong>📅 {formatDate(position.timestamp)}</strong>
+                  <div style={{ marginBottom: '4px', fontSize: '0.9em', color: '#666', fontWeight: 'bold' }}>
+                    📅 {formatDate(position.timestamp)}
                   </div>
                   
-                  <div style={{ marginBottom: '4px', fontSize: '0.9em', color: '#666' }}>
-                    <strong>🌍 Koordinater:</strong> {position.latitude.toFixed(4)}, {position.longitude.toFixed(4)}
+                  <div style={{ fontSize: '0.9em', color: '#666', fontWeight: 'bold' }}>
+                    🌍 {position.latitude.toFixed(5)}, {position.longitude.toFixed(4)}
                   </div>
-                  
-                  {distanceFromPrevious > 0 && (
-                    <div style={{ marginBottom: '4px', fontSize: '0.9em', color: '#666' }}>
-                      <strong>🛤️ Avstånd:</strong> {distanceFromPrevious.toFixed(1)} km
-                    </div>
-                  )}
                 </div>
               </Popup>
             </Marker>
