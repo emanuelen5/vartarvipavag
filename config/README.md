@@ -2,8 +2,8 @@
 
 This little readme instructs you how to set up your home assistant to proxy to the application.
 
-1. Install and configure SSL (I've used Duckdns which is easy) with the *NGINX Home Assistant SSL proxy* addon
-1. Add the following settings to *Customize* to make NGINX read additional configuration files:
+1. Install and configure SSL (I've used Duckdns which is easy) with the [(core) *NGINX Home Assistant SSL proxy*](https://github.com/home-assistant/addons/tree/master/nginx_proxy) addon
+1. Add the following value to the *Customize* setting (in the Configuration tab in Homeassistant) to make NGINX read additional configuration files:
     ```yaml
     active: true
     default: nginx_proxy_default*.conf
@@ -33,7 +33,7 @@ Then we need to configure Homeassistant to push the current location to the web 
 
 ### status updater
 
-Add a *REST command* service that pushes your current position to your app (using local network):
+Add a [*RESTful command*](https://www.home-assistant.io/integrations/rest_command/) service that pushes your current position to your app (using local network):
 
 ```yaml
 rest_command:
@@ -49,7 +49,7 @@ rest_command:
             }
 ```
 
-> [!INFO]
+> [!NOTE]
 > Change `<device>` for the name of your device. Also, the IP above should be the same as you set in the NGINX configuration.
 
 ### automation
