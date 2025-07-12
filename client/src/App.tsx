@@ -92,21 +92,9 @@ const App: React.FC = () => {
         )}
       </main>
 
-      <footer style={{ 
-        textAlign: 'center', 
-        padding: '20px', 
-        color: '#666',
-        borderTop: '1px solid #eee',
-        marginTop: '40px'
-      }}>
+      <footer>
         <p>En app av Sara & Erasmus</p>
         <p>Drivs av Home Assistant & TypeScript | Kartor av OpenStreetMap</p>
-        <p style={{ fontSize: '0.8em', marginTop: '8px' }}>
-          Senast uppdaterad: {positions.length > 0 ? 
-            new Date(positions[positions.length - 1].timestamp).toLocaleString() : 
-            'Ingen data ännu'
-          }
-        </p>
       </footer>
     </div>
   );
