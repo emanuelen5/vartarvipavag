@@ -26,7 +26,7 @@ jobs:
     - run: cd client && npm ci
     - name: Set up the environment
       run: |
-        echo "VITE_API_URL=https://${{ secrets.API_URL }}/vartarvipavag/api" >> client/.env
+        echo "VITE_API_URL=${{ secrets.API_URL }}" >> client/.env
     - run: cd client && npm run build
     - name: Setup Pages
       uses: actions/configure-pages@v5
