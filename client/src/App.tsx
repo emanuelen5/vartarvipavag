@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import InterrailMap from './components/InterrailMap';
 import TravelStats from './components/TravelStats';
 import { Position } from './types';
+import { PositionService } from './services/api';
 import { fakeInterrailData } from './data/fakeData';
 
 const App: React.FC = () => {
@@ -15,11 +16,15 @@ const App: React.FC = () => {
       setError(null);
       
       // Temporarily use fake data for preview
-      setPositions(fakeInterrailData);
+      // setPositions(fakeInterrailData);
+      if (process.env.NODE_ENV === 'development') {
+        const data = fakeInterrailData;
+        setPositions(data);
+      } else {
+        const data = await PositionService.getAllPositions();
+        setPositions(data);
+      }
       
-      // Uncomment this to use real API data instead
-      // const data = await PositionService.getAllPositions();
-      //setPositions(data);
     } catch (err) {
       console.error('Error fetching positions:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch positions');
