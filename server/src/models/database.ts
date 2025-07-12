@@ -2,7 +2,7 @@ import sqlite3 from 'sqlite3';
 import { join } from 'path';
 import { promisify } from 'util';
 
-const DB_PATH = join(__dirname, '../../data/interrail.db');
+const DB_PATH = process.env.DATABASE_PATH || join(__dirname, '../../data/interrail.db');
 
 export class DatabaseManager {
   private static instance: DatabaseManager;
@@ -51,17 +51,17 @@ export class DatabaseManager {
 
     // Create indexes for faster queries
     this.db.exec(`
-      CREATE INDEX IF NOT EXISTS idx_positions_timestamp 
+      CREATE INDEX IF NOT EXISTS idx_positions_timestamp
       ON positions(timestamp)
     `);
 
     this.db.exec(`
-      CREATE INDEX IF NOT EXISTS idx_notes_position_id 
+      CREATE INDEX IF NOT EXISTS idx_notes_position_id
       ON notes(position_id)
     `);
 
     this.db.exec(`
-      CREATE INDEX IF NOT EXISTS idx_notes_timestamp 
+      CREATE INDEX IF NOT EXISTS idx_notes_timestamp
       ON notes(timestamp)
     `);
 
@@ -103,4 +103,4 @@ export class DatabaseManager {
       });
     });
   }
-} 
+}
