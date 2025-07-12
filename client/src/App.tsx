@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import InterrailMap from './components/InterrailMap';
 import TravelStats from './components/TravelStats';
 import { Position } from './types';
-import { PositionService } from './services/api';
+import { PositionService, randomizePosition } from './services/api';
 import { fakeInterrailData } from './data/fakeData';
 
 const App: React.FC = () => {
@@ -16,15 +16,17 @@ const App: React.FC = () => {
       setError(null);
       
       // If local, use fake data, otherwise use API
+      let data: Position[] = [];
       if (import.meta.env.DEV && !import.meta.env.VITE_API_URL) {
         console.log('Using fake data');
-        const data = fakeInterrailData;
-        setPositions(data);
+        data = fakeInterrailData;
       } else {
         console.log('Using API');
-        const data = await PositionService.getAllPositions();
-        setPositions(data);
+        data = await PositionService.getAllPositions();
       }
+
+      data = data.map(p => randomizePosition(p));
+      setPositions(data);
       
     } catch (err) {
       console.error('Error fetching positions:', err);
