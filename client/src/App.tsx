@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import InterrailMap from './components/InterrailMap';
 import TravelStats from './components/TravelStats';
 import { Position } from './types';
+import { fakeInterrailData } from './data/fakeData';
 
 const App: React.FC = () => {
   const [positions, setPositions] = useState<Position[]>([]);
@@ -14,28 +15,7 @@ const App: React.FC = () => {
       setError(null);
       
       // Temporarily use fake data for preview
-      const fakeData: Position[] = [
-        {
-          id: '1',
-          timestamp: '2024-12-15T10:00:00Z',
-          latitude: 59.3293,
-          longitude: 18.0686
-        },
-        {
-          id: '2',
-          timestamp: '2024-12-16T14:20:00Z',
-          latitude: 55.6761,
-          longitude: 12.5683
-        },
-        {
-          id: '3',
-          timestamp: '2024-12-17T09:15:00Z',
-          latitude: 52.5200,
-          longitude: 13.4050
-        }
-      ];
-      
-      setPositions(fakeData);
+      setPositions(fakeInterrailData);
       
       // Uncomment this to use real API data instead
       // const data = await PositionService.getAllPositions();
