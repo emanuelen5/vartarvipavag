@@ -40,7 +40,7 @@ api.interceptors.response.use(
   }
 );
 
-const rng = seedrandom(42); // Create a seeded random number generator
+const rng = seedrandom("42"); // Create a seeded random number generator
 
 /**
  * Randomize a position based on its ID using a static seed.
