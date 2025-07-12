@@ -235,7 +235,7 @@ const InterrailMap: React.FC<InterrailMapProps> = ({ positions }) => {
         <div className="map-info-box">
           <h4>📍 Senaste uppdatering</h4>
           <p>
-            {formatDateInfoBox(latestPosition.timestamp)} vid {latestPosition.longitude.toFixed(4)}, {latestPosition.latitude.toFixed(5)} - <button onClick={panToLatestMarker}>Se på karta</button>
+            {formatDateInfoBox(latestPosition.timestamp)} vid {latestPosition.latitude.toFixed(5)}, {latestPosition.longitude.toFixed(4)} - <button onClick={panToLatestMarker}>Se på karta</button>
           </p>
         </div>
       )}
@@ -284,7 +284,7 @@ const InterrailMap: React.FC<InterrailMapProps> = ({ positions }) => {
                   </div>
                   
                   <div style={{ fontSize: '0.9em', color: '#666', fontWeight: 'bold' }}>
-                    📍 {position.longitude.toFixed(4)}, {position.latitude.toFixed(5)}
+                    📍 {position.latitude.toFixed(5)}, {position.longitude.toFixed(4)}
                   </div>
                 </div>
               </Popup>
@@ -317,7 +317,7 @@ const InterrailMap: React.FC<InterrailMapProps> = ({ positions }) => {
                   </div>
                   
                   <div style={{ fontSize: '0.9em', color: '#666', fontWeight: 'bold' }}>
-                    📍 {position.longitude.toFixed(4)}, {position.latitude.toFixed(5)}
+                    📍 {position.latitude.toFixed(5)}, {position.longitude.toFixed(4)}
                   </div>
                 </div>
               </Popup>
