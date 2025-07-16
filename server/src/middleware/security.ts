@@ -57,17 +57,6 @@ export class SecurityMiddleware {
       'unknown'
     );
   }
-
-  private isAllowedIP(clientIP: string): boolean {
-    // Handle different IP formats
-    const normalizedIP = clientIP.replace(/^::ffff:/, '');
-    
-    return this.config.allowedIPs!.some(allowedIP => 
-      allowedIP === normalizedIP || 
-      allowedIP === clientIP ||
-      (allowedIP === 'localhost' && ['127.0.0.1', '::1'].includes(normalizedIP))
-    );
-  }
 }
 
 // Default instance
