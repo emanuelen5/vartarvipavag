@@ -30,6 +30,10 @@ export class SecurityMiddleware {
       return;
     }
 
+    next();
+  };
+
+  public validateApiKey = (req: Request, res: Response, next: NextFunction): void => {
     // Check API key if enabled
     if (this.config.apiKey) {
       const providedKey = req.headers['x-api-key'] || req.headers['authorization']?.replace('Bearer ', '');
