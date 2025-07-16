@@ -12,6 +12,15 @@ This little readme instructs you how to set up your home assistant to proxy to t
 1. Copy the /config/nginx.conf file from this repo to your Homeassistant /share directory. E.g. in my case I have it set up with docker, so I placed it in `/usr/share/hassio/share`
 1. Update the IP address. It might differ from the 172.17.0.1 as in the
    `proxy_pass` line in nginx.conf.
+   ```bash
+   # Use your IP-address here
+   sed -i 's/<IPADDRESS>/172.17.0.1/' /usr/share/hassio/share/nging.conf
+   ```
+1. If you want to serve the client from another domain, then you also need to update the CORS headers.
+   ```bash
+   # Use your domain name here
+   sed -i 's,<DOMAINNAME>,https://example.com,' /usr/share/hassio/share/nging.conf
+   ```
 
 > [!TIP]
 > Run
