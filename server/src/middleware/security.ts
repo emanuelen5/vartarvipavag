@@ -1,8 +1,15 @@
+import crypto from 'crypto';
 import { NextFunction, Request, Response } from 'express';
 
 export interface SecurityConfig {
+  password?: string;
   apiKey?: string;
   allowedIPs?: string[];
+}
+
+// Hash password using Node.js crypto (equivalent to client-side Web Crypto API)
+function hashPassword(password: string): string {
+  return crypto.createHash('sha256').update(password).digest('hex');
 }
 
 export class SecurityMiddleware {
@@ -10,7 +17,8 @@ export class SecurityMiddleware {
 
   constructor(config: SecurityConfig = {}) {
     this.config = {
-      apiKey: config.apiKey || process.env.API_KEY,
+      password: config.password,
+      apiKey: config.apiKey || process.env.API_KEY || (config.password && hashPassword(config.password)),
       allowedIPs: config.allowedIPs || ['127.0.0.1', '::1', '::ffff:127.0.0.1', 'localhost']
     };
   }
@@ -63,6 +71,7 @@ export class SecurityMiddleware {
 
 // Default instance
 export const securityMiddleware = new SecurityMiddleware({
+  password: process.env.CLIENT_PASSWORD,
   apiKey: process.env.API_KEY,
-  allowedIPs: process.env.ALLOWED_IPS?.split(',') || undefined
+  allowedIPs: process.env.ALLOWED_IPS?.split(',') || undefined,
 });
