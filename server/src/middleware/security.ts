@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 
 export interface SecurityConfig {
-  enableApiKey?: boolean;
   apiKey?: string;
   allowedIPs?: string[];
 }
@@ -11,7 +10,6 @@ export class SecurityMiddleware {
 
   constructor(config: SecurityConfig = {}) {
     this.config = {
-      enableApiKey: config.enableApiKey || false,
       apiKey: config.apiKey || process.env.API_KEY,
       allowedIPs: config.allowedIPs || ['127.0.0.1', '::1', '::ffff:127.0.0.1', 'localhost']
     };
@@ -33,7 +31,7 @@ export class SecurityMiddleware {
     }
 
     // Check API key if enabled
-    if (this.config.enableApiKey && this.config.apiKey) {
+    if (this.config.apiKey) {
       const providedKey = req.headers['x-api-key'] || req.headers['authorization']?.replace('Bearer ', '');
       
       if (!providedKey || providedKey !== this.config.apiKey) {
@@ -61,7 +59,6 @@ export class SecurityMiddleware {
 
 // Default instance
 export const securityMiddleware = new SecurityMiddleware({
-  enableApiKey: process.env.ENABLE_API_KEY_AUTH === 'true',
   apiKey: process.env.API_KEY,
   allowedIPs: process.env.ALLOWED_IPS?.split(',') || undefined
 }); 
