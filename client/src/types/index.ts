@@ -30,4 +30,4 @@ export interface TravelStats {
   duration: number; // in days
   totalPositions: number;
   currentPosition?: Position;
-} 
+}

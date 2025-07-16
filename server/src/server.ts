@@ -1,13 +1,13 @@
-import express from 'express';
-import { createServer } from 'http';
-import { Server } from 'socket.io';
 import dotenv from 'dotenv';
+import express from 'express';
 import { mkdirSync } from 'fs';
+import { createServer } from 'http';
 import { join } from 'path';
+import { Server } from 'socket.io';
 
+import { DatabaseManager } from './models/database';
 import positionsRouter from './routes/positions';
 import telegramRouter, { initializeTelegramBot } from './routes/telegram';
-import { DatabaseManager } from './models/database';
 import { TelegramBotService } from './services/TelegramBot';
 
 // Load environment variables
@@ -44,7 +44,7 @@ const telegramBot = new TelegramBotService({
 if (process.env.TELEGRAM_BOT_TOKEN) {
   telegramBot.initialize();
   initializeTelegramBot(telegramBot);
-  
+
   // Start polling for messages
   telegramBot.startPolling().catch(error => {
     console.error('Failed to start Telegram polling:', error);
@@ -63,8 +63,8 @@ app.set('trust proxy', true);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.json({ 
-    status: 'ok', 
+  res.json({
+    status: 'ok',
     timestamp: new Date().toISOString(),
     service: 'vartarvipavag-server'
   });
@@ -77,7 +77,7 @@ app.use('/api/telegram', telegramRouter);
 // Socket.IO for real-time updates
 io.on('connection', (socket) => {
   console.log('Client connected:', socket.id);
-  
+
   socket.on('disconnect', () => {
     console.log('Client disconnected:', socket.id);
   });
@@ -86,29 +86,29 @@ io.on('connection', (socket) => {
 // Global error handler
 app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error('Unhandled error:', err);
-  res.status(500).json({ 
-    success: false, 
-    error: 'Internal server error' 
+  res.status(500).json({
+    success: false,
+    error: 'Internal server error'
   });
 });
 
 // 404 handler
 app.use('*', (req, res) => {
-  res.status(404).json({ 
-    success: false, 
-    error: 'Route not found' 
+  res.status(404).json({
+    success: false,
+    error: 'Route not found'
   });
 });
 
 // Graceful shutdown
 process.on('SIGTERM', async () => {
   console.log('SIGTERM received, shutting down gracefully...');
-  
+
   // Stop Telegram polling
   if (telegramBot.isInitialized()) {
     await telegramBot.stopPolling();
   }
-  
+
   server.close(() => {
     console.log('Server closed');
     DatabaseManager.getInstance().close();
@@ -118,12 +118,12 @@ process.on('SIGTERM', async () => {
 
 process.on('SIGINT', async () => {
   console.log('SIGINT received, shutting down gracefully...');
-  
+
   // Stop Telegram polling
   if (telegramBot.isInitialized()) {
     await telegramBot.stopPolling();
   }
-  
+
   server.close(() => {
     console.log('Server closed');
     DatabaseManager.getInstance().close();
@@ -138,4 +138,4 @@ server.listen(PORT, () => {
   console.log(`💡 Health check: http://localhost:${PORT}/health`);
 });
 
-export { io }; 
+export { io };

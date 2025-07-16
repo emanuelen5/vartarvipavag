@@ -1,6 +1,7 @@
 import axios from 'axios';
 import seedrandom from 'seedrandom';
 import { ApiResponse, Position } from '../types';
+import { apiKey, hashPassword, setApiKey } from './auth';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
@@ -12,10 +13,16 @@ const api = axios.create({
   },
 });
 
-// Request interceptor for logging
+// Request interceptor for adding auth header and logging
 api.interceptors.request.use(
   (config) => {
     console.log(`API Request: ${config.method?.toUpperCase()} ${config.url}`);
+
+    // Add API key if available
+    if (apiKey) {
+      config.headers['x-api-key'] = apiKey;
+    }
+
     return config;
   },
   (error) => {
@@ -34,6 +41,12 @@ api.interceptors.response.use(
 
     if (error.response?.status === 403) {
       console.error('Write operations are restricted to localhost');
+    }
+
+    // Handle authentication errors
+    if (error.response?.status === 401) {
+      console.error('Authentication failed - clearing stored credentials');
+      setApiKey(null);
     }
 
     return Promise.reject(error);
@@ -60,6 +73,24 @@ export function deterministicRandomizePosition(positions: Position[]): Position[
 }
 
 export class PositionService {
+  static async login(password: string): Promise<void> {
+    try {
+      const hashedPassword = await hashPassword(password);
+      setApiKey(hashedPassword);
+    } catch (error) {
+      console.error('Error during login:', error);
+      throw error;
+    }
+  }
+
+  static async logout(): Promise<void> {
+    setApiKey(null);
+  }
+
+  static isAuthenticated(): boolean {
+    return apiKey !== null;
+  }
+
   /**
    * Fetch all positions from the API
    */

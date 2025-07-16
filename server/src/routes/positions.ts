@@ -6,8 +6,8 @@ import { ApiResponse, CreatePositionRequest, Position, UpdatePositionRequest } f
 const router = Router();
 const positionModel = new PositionModel();
 
-// GET /api/positions - Get all positions (public read access)
-router.get('/', async (req: Request, res: Response) => {
+// GET /api/positions - Get all positions (require API key for external requests)
+router.get('/', securityMiddleware.validateApiKey, async (req: Request, res: Response) => {
   try {
     const positions = await positionModel.findAll();
 
@@ -29,7 +29,7 @@ router.get('/', async (req: Request, res: Response) => {
   }
 });
 
-// POST /api/positions - Create new position (localhost only)
+// POST /api/positions - Create new position (internal network only)
 router.post('/', securityMiddleware.onlyInternalNetwork, async (req: Request, res: Response) => {
   try {
     const positionData: CreatePositionRequest = req.body;
@@ -86,7 +86,7 @@ router.post('/', securityMiddleware.onlyInternalNetwork, async (req: Request, re
   }
 });
 
-// PUT /api/positions/:id - Update position (localhost only)
+// PUT /api/positions/:id - Update position (internal network only)
 router.put('/:id', securityMiddleware.onlyInternalNetwork, async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -143,7 +143,7 @@ router.put('/:id', securityMiddleware.onlyInternalNetwork, async (req: Request, 
   }
 });
 
-// DELETE /api/positions/:id - Delete position (localhost only)
+// DELETE /api/positions/:id - Delete position (internal network only)
 router.delete('/:id', securityMiddleware.onlyInternalNetwork, async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -176,8 +176,8 @@ router.delete('/:id', securityMiddleware.onlyInternalNetwork, async (req: Reques
   }
 });
 
-// GET /api/positions/latest - Get latest position (public read access)
-router.get('/latest', async (req: Request, res: Response) => {
+// GET /api/positions/latest - Get latest position (require API key for external requests)
+router.get('/latest', securityMiddleware.validateApiKey, async (req: Request, res: Response) => {
   try {
     const position = await positionModel.getLatestPosition();
 
