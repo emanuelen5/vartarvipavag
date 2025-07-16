@@ -1,6 +1,5 @@
 import sqlite3 from 'sqlite3';
 import { join } from 'path';
-import { promisify } from 'util';
 
 const DB_PATH = process.env.DATABASE_PATH || join(__dirname, '../../data/interrail.db');
 
@@ -28,10 +27,7 @@ export class DatabaseManager {
         timestamp TEXT NOT NULL,
         latitude REAL NOT NULL,
         longitude REAL NOT NULL,
-        city TEXT,
-        country TEXT,
-        source TEXT DEFAULT 'manual',
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP
+        source TEXT DEFAULT 'manual'
       )
     `);
 
@@ -79,7 +75,7 @@ export class DatabaseManager {
   // Helper methods for promisified operations
   public run(sql: string, params?: any[]): Promise<sqlite3.RunResult> {
     return new Promise((resolve, reject) => {
-      this.db.run(sql, params, function(err) {
+      this.db.run(sql, params, function (err) {
         if (err) reject(err);
         else resolve(this);
       });
