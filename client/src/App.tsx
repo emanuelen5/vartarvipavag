@@ -81,6 +81,11 @@ const App: React.FC = () => {
     setError(null);
   };
 
+  const handleLogout = () => {
+    PositionService.logout();
+    setIsAuthenticated(false);
+  };
+
   const handleRefresh = (): void => {
     fetchPositions();
   };
@@ -133,6 +138,9 @@ const App: React.FC = () => {
               Försök igen
             </button>
           </div>
+        )}
+        {import.meta.env.DEV && (
+          <button onClick={handleLogout}>Logga ut</button>
         )}
 
         {loading && positions.length === 0 ? (
