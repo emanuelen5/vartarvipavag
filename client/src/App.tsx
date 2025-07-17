@@ -68,11 +68,11 @@ const App: React.FC = () => {
     }
   }, [isAuthenticated, authChecked]);
 
-  // Refresh positions every 30 seconds when authenticated
+  // Refresh positions every 10 minutes when authenticated
   useEffect(() => {
     if (!isAuthenticated) return;
 
-    const interval = setInterval(fetchPositions, 30000);
+    const interval = setInterval(fetchPositions, 10 * 60000);
     return () => clearInterval(interval);
   }, [isAuthenticated]);
 
