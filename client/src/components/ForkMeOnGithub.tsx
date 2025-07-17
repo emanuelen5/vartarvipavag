@@ -1,8 +1,8 @@
 export default function ForkMeOnGithub({href}: {href: string}) {
     return <a href={href}
-        style={{position: "fixed", bottom: 0, right: 0, height: "80px", width: "80px", pointerEvents: "none"}}
+        style={{position: "absolute", bottom: "10px", right: "10px", height: "60px", width: "60px", pointerEvents: "auto"}}
         className="fork-me-on-github" aria-label="Fork me on GitHub">
-        <svg width="80" height="80" viewBox="0 0 250 250" style={{border: 0, color: "white", fill: "black"}}
+        <svg width="60" height="60" viewBox="0 0 250 250" style={{border: 0, color: "white", fill: "black"}}
             aria-hidden="true" version="1.1" xmlns="http://www.w3.org/2000/svg">
             <path d="M 250,0 0,250 h 250 z" style={{pointerEvents: "auto"}} />
             <path
@@ -13,4 +13,4 @@ export default function ForkMeOnGithub({href}: {href: string}) {
                 fill="currentColor" className="octo-body" />
         </svg>
     </a>;
-};
+}

@@ -136,11 +136,17 @@ body {
 }
 
 footer {
+  position: relative;
   text-align: center;
   padding: 20px;
   color: var(--text-color);
   margin-top: 40px;
   font-size: 0.8rem;
+  min-height: 100px;
+}
+
+.footer-content {
+  margin-bottom: 20px;
 }
 
 /* Login form styles */

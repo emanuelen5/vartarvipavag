@@ -157,14 +157,18 @@ const App: React.FC = () => {
               positions={positions} 
             />
             <TravelStats positions={positions} />
-            {import.meta.env.VITE_REPO_URL && <ForkMeOnGithub href={import.meta.env.VITE_REPO_URL} />}
           </>
         )}
       </main>
 
       <footer>
-        <p>En app av Sara & Erasmus</p>
-        <p>Drivs av Home Assistant & TypeScript | Kartor av OpenStreetMap</p>
+        <div className="footer-content">
+          <p>En app av Sara & Erasmus</p>
+          <p>Drivs av Home Assistant & TypeScript | Kartor av OpenStreetMap</p>
+        </div>
+        {import.meta.env.VITE_REPO_URL && 
+          <ForkMeOnGithub href={import.meta.env.VITE_REPO_URL} />
+        }
       </footer>
     </div>
   );
