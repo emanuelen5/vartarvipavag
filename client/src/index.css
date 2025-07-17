@@ -238,3 +238,8 @@ footer {
   border-left: 4px solid #dc2626;
   font-size: 0.9rem;
 }
+
+.fork-me-on-github:hover .octo-arm {
+  animation: octocat-wave 560ms ease-in-out;
+  transform-origin: 187.79px 206.30px;
+}

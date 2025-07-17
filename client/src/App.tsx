@@ -5,6 +5,7 @@ import TravelStats from './components/TravelStats';
 import { fakeInterrailData } from './data/fakeData';
 import { PositionService, deterministicRandomizePosition } from './services/api';
 import { Position } from './types';
+import ForkMeOnGithub from './components/ForkMeOnGithub';
 
 const App: React.FC = () => {
   const [positions, setPositions] = useState<Position[]>([]);
@@ -156,6 +157,7 @@ const App: React.FC = () => {
               positions={positions} 
             />
             <TravelStats positions={positions} />
+            {import.meta.env.VITE_REPO_URL && <ForkMeOnGithub href={import.meta.env.VITE_REPO_URL} />}
           </>
         )}
       </main>
