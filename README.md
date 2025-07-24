@@ -4,7 +4,7 @@ A real-time web application for tracking and visualizing our European interrail 
 
 ## 👫 About Us
 
-We (Sara and Ersamus) interrailing 2025 and wanted to play around with different vibe coding tools for learning purposes, so created this not-too-useful app for our friends and families to follow our trip!
+We (Sara and Erasmus) are going interrailing 2025 and wanted to play around with different vibe coding tools for learning purposes, so created this not-too-useful app for our friends and families to follow our trip!
 
 ## 🚀 Quick development setup
 
