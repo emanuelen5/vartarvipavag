@@ -7,8 +7,6 @@ import { Server } from 'socket.io';
 
 import { DatabaseManager } from './models/database';
 import positionsRouter from './routes/positions';
-import telegramRouter, { initializeTelegramBot } from './routes/telegram';
-import { TelegramBotService } from './services/TelegramBot';
 
 // Load environment variables
 dotenv.config();
@@ -35,24 +33,6 @@ try {
 // Initialize database
 DatabaseManager.getInstance();
 
-// Initialize Telegram bot
-const telegramBot = new TelegramBotService({
-  token: process.env.TELEGRAM_BOT_TOKEN || '',
-  pollingInterval: parseInt(process.env.TELEGRAM_POLLING_INTERVAL || '1000')
-});
-
-if (process.env.TELEGRAM_BOT_TOKEN) {
-  telegramBot.initialize();
-  initializeTelegramBot(telegramBot);
-
-  // Start polling for messages
-  telegramBot.startPolling().catch(error => {
-    console.error('Failed to start Telegram polling:', error);
-  });
-} else {
-  console.log('ℹ️  Telegram bot token not configured, Telegram integration disabled');
-}
-
 // Middleware
 // Note: CORS is handled by nginx, not by Express
 app.use(express.json());
@@ -72,7 +52,6 @@ app.get('/health', (req, res) => {
 
 // API routes
 app.use('/api/positions', positionsRouter);
-app.use('/api/telegram', telegramRouter);
 
 // Socket.IO for real-time updates
 io.on('connection', (socket) => {
@@ -104,11 +83,6 @@ app.use('*', (req, res) => {
 process.on('SIGTERM', async () => {
   console.log('SIGTERM received, shutting down gracefully...');
 
-  // Stop Telegram polling
-  if (telegramBot.isInitialized()) {
-    await telegramBot.stopPolling();
-  }
-
   server.close(() => {
     console.log('Server closed');
     DatabaseManager.getInstance().close();
@@ -118,11 +92,6 @@ process.on('SIGTERM', async () => {
 
 process.on('SIGINT', async () => {
   console.log('SIGINT received, shutting down gracefully...');
-
-  // Stop Telegram polling
-  if (telegramBot.isInitialized()) {
-    await telegramBot.stopPolling();
-  }
 
   server.close(() => {
     console.log('Server closed');

@@ -39,7 +39,6 @@ export class DatabaseManager {
         text TEXT NOT NULL,
         timestamp TEXT NOT NULL,
         source TEXT NOT NULL,
-        telegram_user TEXT,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (position_id) REFERENCES positions (id) ON DELETE CASCADE
       )
