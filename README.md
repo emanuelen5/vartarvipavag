@@ -55,7 +55,6 @@ Then you need to also host the client / front-end somewhere (like through Github
 - RESTful API with TypeScript
 - SQLite database for position storage
 - Security middleware (write access restricted to localhost)
-- Telegram bot integration for remote updates
 
 ## 🛠️ Tech Stack
 
@@ -69,7 +68,6 @@ Then you need to also host the client / front-end somewhere (like through Github
 - **Real-time Map**: Interactive visualization of the journey
 - **Position Classification**: Night stops vs daily positions
 - **Journey Stats**: Distance, duration, and position tracking
-- **Telegram Bot**: Update positions remotely via Telegram
 - **Mobile-Friendly**: Responsive design for on-the-go updates
 
 ## 🔐 Security
@@ -85,16 +83,6 @@ vartarvipavag/
 ├── config/          # Nginx & deployment configs
 └── *.md             # Documentation
 ```
-
-## 🤖 Telegram Integration
-
-Set up a Telegram bot to update your journey remotely:
-
-1. Create bot with @BotFather
-2. Add `TELEGRAM_BOT_TOKEN=your_token` to `server/.env`
-3. Share locations and send notes via Telegram!
-
-See [TELEGRAM_SETUP.md](./TELEGRAM_SETUP.md) for detailed setup.
 
 ---
 
