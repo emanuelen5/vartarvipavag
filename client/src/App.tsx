@@ -115,7 +115,7 @@ const App: React.FC = () => {
       <header className="header">
         <div className="container">
           <h1>Sara & Erasmus</h1>
-          <h2>Interrail 2025 🚂</h2>
+          <h2>Honeymoon 🏝️</h2>
         </div>
       </header>
 
