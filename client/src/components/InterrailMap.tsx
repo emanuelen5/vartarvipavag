@@ -62,7 +62,7 @@ const mapStyle = `
   
   .map-info-box h4 {
     margin: 0 0 6px 0;
-    color: #ae3c40;
+    color: #005A32;
     font-size: 16px;
     font-weight: bold;
   }
@@ -74,7 +74,7 @@ const mapStyle = `
   
   .map-info-box button {
     background: none;
-    color: #ae3c40;
+    color: #005A32;
     border: none;
     padding: 0;
     cursor: pointer;
@@ -86,7 +86,7 @@ const mapStyle = `
   }
   
   .map-info-box button:hover {
-    color: #8b2c2f;
+    color: #004425;
   }
 `;
 
@@ -118,7 +118,7 @@ const InterrailMap: React.FC<InterrailMapProps> = ({ positions }) => {
   const nightStopIcon = React.useMemo(() => L.divIcon({
     html: `
       <div style="
-        background-color: #ae3c40;
+        background-color: #005A32;
         width: 25px;
         height: 25px;
         border-radius: 50%;
@@ -327,7 +327,7 @@ const InterrailMap: React.FC<InterrailMapProps> = ({ positions }) => {
              >
               <Popup>
                 <div style={{ minWidth: '180px' }}>
-                  <h4 style={{ margin: '0 0 8px 0', color: '#ae3c40' }}>
+                  <h4 style={{ margin: '0 0 8px 0', color: '#005A32' }}>
                     🌙 Nattens vila
                   </h4>
                   
