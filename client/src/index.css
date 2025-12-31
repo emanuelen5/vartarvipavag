@@ -1,7 +1,7 @@
 :root {
-  --primary-color: #ae3c40;
+  --primary-color: #005A32;
   --secondary-color: #13a575;
-  --background-color: #f1dad8;
+  --background-color: #E5F5E0;
   --text-color: #1f2937;
   --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
@@ -24,12 +24,12 @@ body {
   min-height: 100vh;
 }
 .header {
-  background: #f5c8c5;
+  background: #C7E9C0;
   padding: 2rem 0;
   margin-bottom: 2rem;
 }
 .header h1, h2 {
-  color: #ae3c40;
+  color: #005A32;
   text-align: center;
 }
 .header h1 {
@@ -278,7 +278,7 @@ footer {
 }
 
 .login-button:hover:not(:disabled) {
-  background: #973337;
+  background: #004425;
 }
 
 .login-button:disabled {
