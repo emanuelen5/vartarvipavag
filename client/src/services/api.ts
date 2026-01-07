@@ -53,13 +53,40 @@ api.interceptors.response.use(
   }
 );
 
-function getRandomOffset(rng: () => number, range: number): number {
-  return (rng() * 2 * range) - range;
+/**
+ * Convert meters to degrees of latitude
+ * 1 degree of latitude ≈ 111,000 meters (constant)
+ */
+function metersToLatitudeDegrees(meters: number): number {
+  return meters / 111000;
+}
+
+/**
+ * Convert meters to degrees of longitude at a given latitude
+ * 1 degree of longitude ≈ 111,000 * cos(latitude) meters
+ */
+function metersToLongitudeDegrees(meters: number, latitude: number): number {
+  const metersPerDegree = 111000 * Math.cos(latitude * Math.PI / 180);
+  return meters / metersPerDegree;
 }
 
 function randomizePosition(rng: () => number, position: Position): Position {
-  const latOffset = getRandomOffset(rng, 0.002);
-  const lonOffset = getRandomOffset(rng, 0.002);
+  // Apply exactly 50 meters of noise in a random direction
+  const noiseMeters = 50;
+
+  // Pick a random angle (0 to 2π)
+  const angle = rng() * 2 * Math.PI;
+
+  // Calculate offset components in meters
+  // North-south component (latitude)
+  const latOffsetMeters = noiseMeters * Math.cos(angle);
+  // East-west component (longitude)
+  const lonOffsetMeters = noiseMeters * Math.sin(angle);
+
+  // Convert meter offsets to degrees
+  const latOffset = metersToLatitudeDegrees(latOffsetMeters);
+  const lonOffset = metersToLongitudeDegrees(lonOffsetMeters, position.latitude);
+
   return {
     ...position,
     latitude: position.latitude + latOffset,
