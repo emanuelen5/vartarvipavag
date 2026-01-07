@@ -62,7 +62,7 @@ export const fakeInterrailData: Position[] = [
     latitude: 55.6761,
     longitude: 12.5683 // Arriving in Copenhagen
   },
-  
+
   // Day 2 - Copenhagen night stop
   {
     id: '11',
@@ -154,7 +154,7 @@ export const fakeInterrailData: Position[] = [
     latitude: 52.5200,
     longitude: 13.4050 // Arriving in Berlin
   },
-  
+
   // Day 3 - Berlin night stop
   {
     id: '26',
@@ -246,11 +246,19 @@ export const fakeInterrailData: Position[] = [
     latitude: 48.8566,
     longitude: 2.3522 // Arriving in Paris
   },
-  
+
   // Day 4 - Paris night stop
   {
     id: '41',
     timestamp: '2024-12-18T00:00:00Z',
+    latitude: 48.8566,
+    longitude: 2.3522 // Paris hotel (midnight = night stop)
+  },
+
+  // Day 5 - Paris night stop
+  {
+    id: '42',
+    timestamp: '2024-12-19T00:00:00Z',
     latitude: 48.8566,
     longitude: 2.3522 // Paris hotel (midnight = night stop)
   }
