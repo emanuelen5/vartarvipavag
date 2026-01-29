@@ -1,6 +1,6 @@
-# 🚂 Interrail Journey Tracker
+# 🚂 Journey Tracker
 
-A real-time web application for tracking and visualizing our European interrail adventure. Built with React + TypeScript frontend and Node.js + Express backend.
+A real-time web application for tracking and visualizing our traveling adventures. Built with React + TypeScript frontend and Node.js + Express backend.
 
 ## 👫 About Us
 
