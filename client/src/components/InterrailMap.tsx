@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import L from 'leaflet';
 import { Position } from '../types';
+import { PositionService } from '../services/api';
 
 // Fix for default markers in React-Leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -94,10 +95,14 @@ interface InterrailMapProps {
   positions: Position[];
   homeTimezone?: string; // IANA timezone (e.g., "Europe/Stockholm")
   nightStopHour?: number; // Hour of day for night stop detection (0-23)
+  isAdminMode?: boolean; // Whether admin mode is active
+  onPositionDeleted?: () => void; // Callback when a position is deleted
 }
 
 const InterrailMap: React.FC<InterrailMapProps> = ({
   positions,
+  isAdminMode = false,
+  onPositionDeleted,
   homeTimezone,
   nightStopHour
 }) => {
@@ -119,6 +124,23 @@ const InterrailMap: React.FC<InterrailMapProps> = ({
 
   // Get the latest position (last in array)
   const latestPosition = positions[positions.length - 1];
+
+  // Function to handle position deletion
+  const handleDeletePosition = async (positionId: string) => {
+    if (!window.confirm('Är du säker på att du vill ta bort denna position?')) {
+      return;
+    }
+
+    try {
+      await PositionService.deletePosition(positionId);
+      if (onPositionDeleted) {
+        onPositionDeleted();
+      }
+    } catch (error) {
+      console.error('Error deleting position:', error);
+      alert('Kunde inte ta bort positionen. Kontrollera att du är på det lokala nätverket.');
+    }
+  };
 
   // Function to pan to latest marker
   const panToLatestMarker = () => {
@@ -443,9 +465,29 @@ const InterrailMap: React.FC<InterrailMapProps> = ({
                       📆 {formatDateDailyPosition(position.timestamp)}
                     </div>
 
-                    <div style={{ fontSize: '0.9em', color: '#666', fontWeight: 'bold' }}>
+                    <div style={{ fontSize: '0.9em', color: '#666', fontWeight: 'bold', marginBottom: isAdminMode ? '8px' : '0' }}>
                       📍 {position.latitude.toFixed(5)}, {position.longitude.toFixed(4)}
                     </div>
+
+                    {isAdminMode && (
+                      <button
+                        onClick={() => handleDeletePosition(position.id)}
+                        style={{
+                          marginTop: '8px',
+                          padding: '6px 12px',
+                          background: '#dc2626',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                          fontSize: '0.85em',
+                          fontWeight: 'bold',
+                          width: '100%'
+                        }}
+                      >
+                        🗑️ Ta bort
+                      </button>
+                    )}
                   </div>
                 </Popup>
               </Marker>
@@ -476,9 +518,29 @@ const InterrailMap: React.FC<InterrailMapProps> = ({
                       📆 {formatDateNightStop(position.timestamp)}
                     </div>
 
-                    <div style={{ fontSize: '0.9em', color: '#666', fontWeight: 'bold' }}>
+                    <div style={{ fontSize: '0.9em', color: '#666', fontWeight: 'bold', marginBottom: isAdminMode ? '8px' : '0' }}>
                       📍 {position.latitude.toFixed(5)}, {position.longitude.toFixed(4)}
                     </div>
+
+                    {isAdminMode && (
+                      <button
+                        onClick={() => handleDeletePosition(position.id)}
+                        style={{
+                          marginTop: '8px',
+                          padding: '6px 12px',
+                          background: '#dc2626',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                          fontSize: '0.85em',
+                          fontWeight: 'bold',
+                          width: '100%'
+                        }}
+                      >
+                        🗑️ Ta bort
+                      </button>
+                    )}
                   </div>
                 </Popup>
               </Marker>

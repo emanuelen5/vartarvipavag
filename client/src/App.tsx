@@ -13,11 +13,12 @@ const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [authChecked, setAuthChecked] = useState<boolean>(false);
+  const [isAdminMode, setIsAdminMode] = useState<boolean>(false);
 
   // Check authentication status on app load
   useEffect(() => {
-    // If using fake data in dev mode, skip authentication
-    if (!import.meta.env.VITE_API_URL) {
+    // If using fake data, skip authentication
+    if (import.meta.env.VITE_USE_FAKE_DATA === 'true') {
       setIsAuthenticated(true);
       setAuthChecked(true);
       return;
@@ -25,7 +26,9 @@ const App: React.FC = () => {
 
     // Check if user has stored API key
     const isAuth = PositionService.isAuthenticated();
+    const isAdmin = PositionService.isAdminAuthenticated();
     setIsAuthenticated(isAuth);
+    setIsAdminMode(isAdmin);
     setAuthChecked(true);
   }, []);
 
@@ -35,9 +38,9 @@ const App: React.FC = () => {
       setLoading(true);
       setError(null);
 
-      // If local, use fake data, otherwise use API
+      // Use fake data if VITE_USE_FAKE_DATA is 'true', otherwise use API
       let data: Position[] = [];
-      if (import.meta.env.DEV && !import.meta.env.VITE_API_URL) {
+      if (import.meta.env.VITE_USE_FAKE_DATA === 'true') {
         console.log('Using fake data');
         data = fakeInterrailData;
       } else {
@@ -77,14 +80,22 @@ const App: React.FC = () => {
     return () => clearInterval(interval);
   }, [isAuthenticated]);
 
-  const handleLoginSuccess = () => {
+  const handleLoginSuccess = (isAdmin: boolean) => {
     setIsAuthenticated(true);
+    setIsAdminMode(isAdmin);
     setError(null);
+    
+    // Clean up URL parameters/hash after successful login
+    if (window.location.search.includes('admin=true') || window.location.hash === '#admin') {
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, '', newUrl);
+    }
   };
 
   const handleLogout = () => {
     PositionService.logout();
     setIsAuthenticated(false);
+    setIsAdminMode(false);
   };
 
   const handleRefresh = (): void => {
@@ -103,9 +114,16 @@ const App: React.FC = () => {
   }
 
   if (!isAuthenticated) {
+    // Check for admin mode in URL parameter or hash
+    const urlParams = new URLSearchParams(window.location.search);
+    const isAdminUrl = urlParams.get('admin') === 'true' || window.location.hash === '#admin';
+    
     return (
       <div className="app">
-        <LoginForm onLoginSuccess={handleLoginSuccess} />
+        <LoginForm 
+          onLoginSuccess={handleLoginSuccess} 
+          showAdminOption={isAdminUrl}
+        />
       </div>
     );
   }
@@ -153,8 +171,25 @@ const App: React.FC = () => {
           </div>
         ) : (
           <>
+            {isAdminMode && (
+              <div style={{ 
+                background: '#fef3c7', 
+                border: '1px solid #fbbf24', 
+                borderRadius: '8px', 
+                padding: '12px', 
+                marginBottom: '16px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+                <span style={{ fontSize: '20px' }}>🔧</span>
+                <strong>Admin-läge aktivt</strong> - Du kan ta bort positioner
+              </div>
+            )}
             <InterrailMap 
-              positions={positions} 
+              positions={positions}
+              isAdminMode={isAdminMode}
+              onPositionDeleted={fetchPositions}
             />
             <TravelStats positions={positions} />
           </>

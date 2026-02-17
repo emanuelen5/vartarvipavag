@@ -6,6 +6,7 @@ import { join } from 'path';
 import { Server } from 'socket.io';
 
 import { DatabaseManager } from './models/database';
+import authRouter from './routes/auth';
 import positionsRouter from './routes/positions';
 import telegramRouter, { initializeTelegramBot } from './routes/telegram';
 import { TelegramBotService } from './services/TelegramBot';
@@ -71,6 +72,7 @@ app.get('/health', (req, res) => {
 });
 
 // API routes
+app.use('/api/auth', authRouter);
 app.use('/api/positions', positionsRouter);
 app.use('/api/telegram', telegramRouter);
 

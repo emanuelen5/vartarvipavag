@@ -2,14 +2,16 @@ import React, { useState } from 'react';
 import { PositionService } from '../services/api';
 
 interface LoginFormProps {
-  onLoginSuccess: () => void;
+  onLoginSuccess: (isAdmin: boolean) => void;
+  showAdminOption?: boolean; // Only show admin option when accessed via special URL
 }
 
-const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
+const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess, showAdminOption = false }) => {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [isAdminMode, setIsAdminMode] = useState(showAdminOption); // Auto-enable if accessed via admin URL
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,12 +19,17 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
     setError('');
 
     try {
-      await PositionService.login(password);
+      if (isAdminMode) {
+        await PositionService.adminLogin(password);
+      } else {
+        await PositionService.login(password);
+      }
       setPassword('');
-      onLoginSuccess();
+      onLoginSuccess(isAdminMode);
     } catch (error: any) {
       console.error('Login failed:', error);
-      setError(error?.response?.data?.error || 'Login failed. Please check your password.');
+      const errorMessage = error?.response?.data?.error || error?.message || 'Login failed. Please check your password.';
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -36,9 +43,27 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
     <div className="login-container">
       <div className="login-card">
         <h2>🗺️ Vart är vi på väg?</h2>
-        <p>Ange lösenord för att få tillgång till sidan.</p>
+        {showAdminOption ? (
+          <p style={{ color: '#dc2626', fontWeight: 'bold' }}>🔧 Admin-läge</p>
+        ) : (
+          <p>Ange lösenord för att få tillgång till sidan.</p>
+        )}
 
         <form onSubmit={handleSubmit} className="login-form">
+          {showAdminOption && (
+            <div className="form-group">
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                <input
+                  type="checkbox"
+                  checked={isAdminMode}
+                  onChange={(e) => setIsAdminMode(e.target.checked)}
+                  disabled={isLoading}
+                  style={{ cursor: 'pointer' }}
+                />
+                <span>Admin-läge (för att ta bort positioner)</span>
+              </label>
+            </div>
+          )}
           <div className="form-group">
             <label htmlFor="password">Lösenord:</label>
             <div className="password-input-container">
